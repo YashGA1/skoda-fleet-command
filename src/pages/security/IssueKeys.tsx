@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Key, Search, Filter, Clock, User, Car, Calendar, AlertTriangle } from 'lucide-react';
+import { Key, Search, Filter, Clock, User, Car, Calendar, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,11 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useBookings } from '@/hooks/useBookings';
-import { useVehicles } from '@/hooks/useVehicles';
-import { useKeyManagement } from '@/hooks/useKeyManagement';
-import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 const issueKeySchema = z.object({
   bookingId: z.string().min(1, 'Please select a booking'),
@@ -25,16 +22,88 @@ const issueKeySchema = z.object({
 
 type IssueKeyForm = z.infer<typeof issueKeySchema>;
 
+// Mock data for demonstration
+const mockVehicles = [
+  { id: '1', brand: 'Škoda', model: 'Octavia', licensePlate: 'PG-123-AB', status: 'available' },
+  { id: '2', brand: 'Škoda', model: 'Fabia', licensePlate: 'PG-456-CD', status: 'available' },
+  { id: '3', brand: 'Škoda', model: 'Superb', licensePlate: 'PG-789-EF', status: 'available' },
+  { id: '4', brand: 'Škoda', model: 'Kodiaq', licensePlate: 'PG-321-GH', status: 'available' },
+  { id: '5', brand: 'Škoda', model: 'Kamiq', licensePlate: 'PG-654-IJ', status: 'available' },
+];
+
+const mockBookings = [
+  { 
+    id: '1', 
+    vehicleId: '1', 
+    trainerName: 'John Smith', 
+    purpose: 'Highway driving lesson', 
+    urgency: 'high',
+    status: 'approved',
+    startDate: '2024-01-15T09:00:00',
+    endDate: '2024-01-15T17:00:00',
+    notes: 'Student preparing for highway test'
+  },
+  { 
+    id: '2', 
+    vehicleId: '2', 
+    trainerName: 'Sarah Johnson', 
+    purpose: 'Parallel parking practice', 
+    urgency: 'normal',
+    status: 'approved',
+    startDate: '2024-01-15T10:00:00',
+    endDate: '2024-01-15T16:00:00',
+    notes: ''
+  },
+  { 
+    id: '3', 
+    vehicleId: '3', 
+    trainerName: 'Mike Davis', 
+    purpose: 'City driving experience', 
+    urgency: 'high',
+    status: 'approved',
+    startDate: '2024-01-16T08:00:00',
+    endDate: '2024-01-16T18:00:00',
+    notes: 'Nervous student, needs patient approach'
+  },
+  { 
+    id: '4', 
+    vehicleId: '4', 
+    trainerName: 'Emma Wilson', 
+    purpose: 'Night driving lesson', 
+    urgency: 'normal',
+    status: 'approved',
+    startDate: '2024-01-17T18:00:00',
+    endDate: '2024-01-17T22:00:00',
+    notes: 'Special evening session'
+  },
+  { 
+    id: '5', 
+    vehicleId: '5', 
+    trainerName: 'Alex Brown', 
+    purpose: 'Final exam preparation', 
+    urgency: 'high',
+    status: 'approved',
+    startDate: '2024-01-18T09:00:00',
+    endDate: '2024-01-18T15:00:00',
+    notes: 'Student has exam next week'
+  },
+];
+
+const mockKeyIssues = [
+  { id: '1', bookingId: '6', status: 'issued', issuedAt: '2024-01-14T08:00:00' },
+  { id: '2', bookingId: '7', status: 'overdue', issuedAt: '2024-01-13T09:00:00' },
+  { id: '3', bookingId: '8', status: 'issued', issuedAt: '2024-01-14T14:00:00' },
+];
+
 export function IssueKeys() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isIssueDialogOpen, setIsIssueDialogOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [keyIssues, setKeyIssues] = useState(mockKeyIssues);
+  const [loading, setLoading] = useState(false);
   
-  const { user } = useAuth();
-  const { bookings, loading: bookingsLoading } = useBookings();
-  const { vehicles } = useVehicles();
-  const { keyIssues, issueKey, loading: keyLoading } = useKeyManagement();
+  const { toast } = useToast();
 
   const form = useForm<IssueKeyForm>({
     resolver: zodResolver(issueKeySchema),
@@ -46,7 +115,7 @@ export function IssueKeys() {
   });
 
   // Filter approved bookings that don't have keys issued yet
-  const availableBookings = bookings.filter(booking => {
+  const availableBookings = mockBookings.filter(booking => {
     const hasKeyIssued = keyIssues.some(key => key.bookingId === booking.id);
     return booking.status === 'approved' && !hasKeyIssued;
   });
@@ -62,7 +131,7 @@ export function IssueKeys() {
   });
 
   const getVehicleDetails = (vehicleId: string) => {
-    return vehicles.find(v => v.id === vehicleId);
+    return mockVehicles.find(v => v.id === vehicleId);
   };
 
   const getUrgencyBadge = (urgency: string) => {
@@ -80,15 +149,37 @@ export function IssueKeys() {
   };
 
   const onSubmit = async (data: IssueKeyForm) => {
-    if (!selectedBooking || !user) return;
+    if (!selectedBooking) return;
 
+    setLoading(true);
+    
     try {
-      await issueKey({
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Create new key issue
+      const newKeyIssue = {
+        id: String(keyIssues.length + 1),
         bookingId: data.bookingId,
         vehicleId: selectedBooking.vehicleId,
-        issuedBy: user.id,
+        issuedBy: 'current-user',
         issuedAt: new Date().toISOString(),
         expectedReturn: data.expectedReturnTime,
+        status: 'issued' as const,
+        notes: data.notes || '',
+        returned: false,
+        returnedAt: null,
+        returnCondition: null,
+        damageNotes: null
+      };
+      
+      // Update state
+      setKeyIssues([...keyIssues, newKeyIssue]);
+      
+      // Show success toast
+      toast({
+        title: "Key Issued Successfully",
+        description: `Key for ${getVehicleDetails(selectedBooking.vehicleId)?.brand} ${getVehicleDetails(selectedBooking.vehicleId)?.model} has been issued to ${selectedBooking.trainerName}`,
       });
       
       setIsIssueDialogOpen(false);
@@ -96,6 +187,13 @@ export function IssueKeys() {
       setSelectedBooking(null);
     } catch (error) {
       console.error('Error issuing key:', error);
+      toast({
+        title: "Error",
+        description: "Failed to issue key. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,7 +204,7 @@ export function IssueKeys() {
     overdueKeys: keyIssues.filter(k => k.status === 'overdue').length,
   };
 
-  if (bookingsLoading || keyLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -341,12 +439,22 @@ export function IssueKeys() {
                   type="button" 
                   variant="outline" 
                   onClick={() => setIsIssueDialogOpen(false)}
+                  disabled={loading}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-gradient-primary hover:bg-primary-hover">
-                  <Key className="h-4 w-4 mr-2" />
-                  Issue Key
+                <Button type="submit" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                      Issuing...
+                    </>
+                  ) : (
+                    <>
+                      <Key className="h-4 w-4 mr-2" />
+                      Issue Key
+                    </>
+                  )}
                 </Button>
               </div>
             </form>
