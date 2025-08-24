@@ -42,6 +42,7 @@ function AppRoutes() {
         {/* Security Routes */}
         <Route path="/security" element={user?.role === 'security' ? <SecurityDashboard /> : <Navigate to={`/${user?.role}`} />} />
         <Route path="/security/issue-keys" element={user?.role === 'security' ? <IssueKeys /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/security/keys" element={user?.role === 'security' ? <IssueKeys /> : <Navigate to={`/${user?.role}`} />} />
         
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />
