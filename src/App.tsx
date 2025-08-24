@@ -10,6 +10,7 @@ import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { VehicleManagement } from "@/pages/admin/VehicleManagement";
 import { TrainerDashboard } from "@/pages/trainer/TrainerDashboard";
 import { SecurityDashboard } from "@/pages/security/SecurityDashboard";
+import { IssueKeys } from "@/pages/security/IssueKeys";
 import { BookVehicle } from "@/pages/trainer/BookVehicle";
 import { MyBookings } from "@/pages/trainer/MyBookings";
 import NotFound from "./pages/NotFound";
@@ -40,6 +41,7 @@ function AppRoutes() {
         
         {/* Security Routes */}
         <Route path="/security" element={user?.role === 'security' ? <SecurityDashboard /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/security/issue-keys" element={user?.role === 'security' ? <IssueKeys /> : <Navigate to={`/${user?.role}`} />} />
         
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />
