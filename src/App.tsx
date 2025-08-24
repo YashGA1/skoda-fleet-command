@@ -11,6 +11,7 @@ import { VehicleManagement } from "@/pages/admin/VehicleManagement";
 import { TrainerDashboard } from "@/pages/trainer/TrainerDashboard";
 import { SecurityDashboard } from "@/pages/security/SecurityDashboard";
 import { IssueKeys } from "@/pages/security/IssueKeys";
+import { VehicleReturns } from "@/pages/security/VehicleReturns";
 import { BookVehicle } from "@/pages/trainer/BookVehicle";
 import { MyBookings } from "@/pages/trainer/MyBookings";
 import NotFound from "./pages/NotFound";
@@ -43,6 +44,7 @@ function AppRoutes() {
         <Route path="/security" element={user?.role === 'security' ? <SecurityDashboard /> : <Navigate to={`/${user?.role}`} />} />
         <Route path="/security/issue-keys" element={user?.role === 'security' ? <IssueKeys /> : <Navigate to={`/${user?.role}`} />} />
         <Route path="/security/keys" element={user?.role === 'security' ? <IssueKeys /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/security/returns" element={user?.role === 'security' ? <VehicleReturns /> : <Navigate to={`/${user?.role}`} />} />
         
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />
