@@ -41,7 +41,7 @@ const navigationItems: Record<UserRole, Array<{
     { title: 'Vehicles', url: '/admin/vehicles', icon: Car, group: 'Management' },
     { title: 'Users', url: '/admin/users', icon: Users, group: 'Management' },
     { title: 'Bookings', url: '/admin/bookings', icon: Calendar, group: 'Management' },
-    { title: 'Service Records', url: '/admin/service', icon: Settings, group: 'Maintenance' },
+    { title: 'Service Records', url: '/admin/service-records', icon: Settings, group: 'Maintenance' },
     { title: 'Reports', url: '/admin/reports', icon: FileText, group: 'Reports' },
   ],
   trainer: [
