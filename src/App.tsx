@@ -11,7 +11,7 @@ import { VehicleManagement } from "@/pages/admin/VehicleManagement";
 import { Analytics } from "@/pages/admin/Analytics";
 import { Users } from "@/pages/admin/Users";
 import { Bookings } from "@/pages/admin/Bookings";
-import { ServiceRecords } from "@/pages/admin/ServiceRecords";
+import ServiceRecords from "@/pages/admin/ServiceRecords";
 import { Reports } from "@/pages/admin/Reports";
 import { TrainerDashboard } from "@/pages/trainer/TrainerDashboard";
 import { SecurityDashboard } from "@/pages/security/SecurityDashboard";

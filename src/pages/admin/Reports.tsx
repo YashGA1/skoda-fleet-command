@@ -313,7 +313,7 @@ export function Reports() {
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-sm">{template.name}</div>
-                    {getTypeBadge(template.type)}
+                    {getTypeBadge(template.type as "vehicle" | "booking" | "financial" | "user" | "maintenance")}
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground mb-3">{template.description}</p>

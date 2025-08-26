@@ -1,658 +1,508 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
+import { Search, Plus, Filter, Calendar, Wrench, AlertTriangle, CheckCircle, Clock, Car, User, FileText, Download, Eye, Shield, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { StatCard } from '@/components/dashboard/StatCard';
-import { Plus, Edit, Search, Filter, Wrench, Calendar, AlertTriangle, CheckCircle } from 'lucide-react';
-import { toast } from 'sonner';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 
-interface ServiceRecord {
+interface VehicleRecord {
   id: string;
-  vehicleModel: string;
-  licensePlate: string;
-  serviceType: 'routine' | 'repair' | 'inspection' | 'emergency';
-  description: string;
-  serviceDate: string;
-  nextServiceDate: string;
-  cost: number;
-  mileageAtService: number;
-  technician: string;
-  location: string;
-  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  notes?: string;
-  createdAt: string;
+  sl: number;
+  academyLocation: string;
+  brand: string;
+  model: string;
+  name: string;
+  vehicleRegNo: string;
+  vinNo: string;
+  insuranceValidityDate: string;
+  insuranceStatus: 'Valid' | 'Expired';
+  pucValidityDate: string;
+  pucStatus: 'Valid' | 'Expired' | 'NA';
+  dateDecommissioned?: string;
+  allocatedTrainer: string;
+  remarks: string;
+  costIncurred?: number;
+  modelYear: number;
+  fuel: string;
+  capacity: string;
+  gearbox: string;
+  trainingSchedule?: {
+    from: string;
+    to: string;
+    training: string;
+  };
 }
 
-const mockServiceRecords: ServiceRecord[] = [
+const mockVehicleRecords: VehicleRecord[] = [
   {
     id: '1',
-    vehicleModel: 'Skoda Octavia',
-    licensePlate: 'SK-001-AB',
-    serviceType: 'routine',
-    description: 'Oil change and filter replacement',
-    serviceDate: '2024-01-15',
-    nextServiceDate: '2024-04-15',
-    cost: 150,
-    mileageAtService: 45000,
-    technician: 'John Mechanic',
-    location: 'Service Center A',
-    status: 'completed',
-    priority: 'medium',
-    notes: 'All systems checked, no additional issues found',
-    createdAt: '2024-01-10'
+    sl: 1,
+    academyLocation: 'Pune',
+    brand: 'VW',
+    model: 'Vento',
+    name: 'Polo A05 Ind.Highl 77 A6F',
+    vehicleRegNo: 'MH14DX2031',
+    vinNo: 'WVWJ11609CT011421',
+    insuranceValidityDate: '2026-06-30',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '2025-05-20',
+    pucStatus: 'Expired',
+    allocatedTrainer: '',
+    remarks: 'Transferred to VGTAP, NSTI, Hyderabad on 08.07.2025. PUC is not required as the car is used solely for static training purposes within the VGTAP institute.',
+    modelYear: 2015,
+    fuel: 'TDI',
+    capacity: '1.5',
+    gearbox: 'DQ200-7F'
   },
   {
     id: '2',
-    vehicleModel: 'VW Golf',
-    licensePlate: 'VW-003-CD',
-    serviceType: 'inspection',
-    description: 'Annual safety inspection',
-    serviceDate: '2024-01-20',
-    nextServiceDate: '2025-01-20',
-    cost: 80,
-    mileageAtService: 32000,
-    technician: 'Mike Inspector',
-    location: 'Inspection Station B',
-    status: 'scheduled',
-    priority: 'high',
-    notes: 'Required by law, must be completed before deadline',
-    createdAt: '2024-01-18'
+    sl: 4,
+    academyLocation: 'Pune',
+    brand: 'VW',
+    model: 'Vento',
+    name: 'POLO A05 1.5 HIGHL 77 TDI D7F',
+    vehicleRegNo: 'MH14EY0185',
+    vinNo: 'MEXD1560XFT089626',
+    insuranceValidityDate: '2026-06-30',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '2025-09-15',
+    pucStatus: 'Valid',
+    allocatedTrainer: 'Mahesh Deshmukh',
+    remarks: '',
+    modelYear: 2015,
+    fuel: 'TDI',
+    capacity: '1.5',
+    gearbox: 'DQ200-7F'
   },
   {
     id: '3',
-    vehicleModel: 'Audi A4',
-    licensePlate: 'AD-002-EF',
-    serviceType: 'repair',
-    description: 'Brake pad replacement',
-    serviceDate: '2024-01-18',
-    nextServiceDate: '2024-07-18',
-    cost: 320,
-    mileageAtService: 78000,
-    technician: 'Sarah Brake-Expert',
-    location: 'Service Center A',
-    status: 'in-progress',
-    priority: 'critical',
-    notes: 'Emergency repair - brakes showing wear beyond safe limits',
-    createdAt: '2024-01-16'
+    sl: 5,
+    academyLocation: 'Pune',
+    brand: 'VW',
+    model: 'Passat',
+    name: 'PASSAT Sed. HL 130 TDID6F',
+    vehicleRegNo: 'MH14GN0436',
+    vinNo: 'WVWK163CZHA000013',
+    insuranceValidityDate: '2026-06-30',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '2025-09-23',
+    pucStatus: 'Valid',
+    allocatedTrainer: 'Ranjeet Thorat',
+    remarks: '',
+    modelYear: 2017,
+    fuel: 'TDI',
+    capacity: '2.0',
+    gearbox: 'DQ250-6F',
+    trainingSchedule: {
+      from: 'Monday',
+      to: 'Friday',
+      training: 'Diagnostics'
+    }
   },
   {
     id: '4',
-    vehicleModel: 'Skoda Fabia',
-    licensePlate: 'SK-004-GH',
-    serviceType: 'routine',
-    description: 'Transmission fluid change',
-    serviceDate: '2024-01-25',
-    nextServiceDate: '2024-07-25',
-    cost: 180,
-    mileageAtService: 56000,
-    technician: 'Tom Transmission',
-    location: 'Service Center B',
-    status: 'scheduled',
-    priority: 'medium',
-    notes: 'Preventive maintenance as per schedule',
-    createdAt: '2024-01-20'
+    sl: 6,
+    academyLocation: 'Pune',
+    brand: 'VW',
+    model: 'Tiguan AllSpace',
+    name: 'Tiguan L 2.0 HL GT140TSI D7A',
+    vehicleRegNo: 'MH14JH4308',
+    vinNo: 'WVGZZZ5NZLM088776',
+    insuranceValidityDate: '2025-12-09',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '2025-09-15',
+    pucStatus: 'Valid',
+    allocatedTrainer: 'Ranjeet Thorat',
+    remarks: 'Battery required. Under process',
+    costIncurred: 7559.48,
+    modelYear: 2020,
+    fuel: 'TFSI',
+    capacity: '2.0',
+    gearbox: 'DQ381-7A'
   },
   {
     id: '5',
-    vehicleModel: 'VW Passat',
-    licensePlate: 'VW-008-IJ',
-    serviceType: 'emergency',
-    description: 'Engine coolant leak repair',
-    serviceDate: '2024-01-12',
-    nextServiceDate: '2024-03-12',
-    cost: 450,
-    mileageAtService: 89000,
-    technician: 'Dave Emergency',
-    location: 'Emergency Service',
-    status: 'completed',
-    priority: 'critical',
-    notes: 'Immediate repair required, vehicle was out of service',
-    createdAt: '2024-01-12'
+    sl: 7,
+    academyLocation: 'Pune',
+    brand: 'VW',
+    model: 'T Roc',
+    name: 'T-ROC 1.5 GT110 TSID7F',
+    vehicleRegNo: 'MH14JH4307',
+    vinNo: 'WVGZZZA1ZLV079005',
+    insuranceValidityDate: '2025-12-09',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '2025-04-21',
+    pucStatus: 'Expired',
+    allocatedTrainer: 'Ranjeet Thorat',
+    remarks: 'it had been diagnosed for the Mechatronics replacement as vehicle was not moving.',
+    modelYear: 2020,
+    fuel: 'TSI ACT',
+    capacity: '1.5',
+    gearbox: 'DQ200-7F'
   },
   {
     id: '6',
-    vehicleModel: 'Skoda Superb',
-    licensePlate: 'SK-005-KL',
-    serviceType: 'routine',
-    description: 'Tire rotation and alignment',
-    serviceDate: '2024-01-30',
-    nextServiceDate: '2024-04-30',
-    cost: 120,
-    mileageAtService: 34000,
-    technician: 'Lisa Tire-Pro',
-    location: 'Service Center A',
-    status: 'scheduled',
-    priority: 'low',
-    notes: 'Regular maintenance to ensure even tire wear',
-    createdAt: '2024-01-25'
+    sl: 8,
+    academyLocation: 'Pune',
+    brand: 'VW',
+    model: 'Taigun',
+    name: 'TAIGUN GT PLUS 1.5L TSI 110kW DSG',
+    vehicleRegNo: 'MH14JU1691',
+    vinNo: 'MEXH21CW9NT000126',
+    insuranceValidityDate: '2025-10-09',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '2025-09-15',
+    pucStatus: 'Valid',
+    allocatedTrainer: 'Ranjeet Thorat',
+    remarks: '',
+    modelYear: 2022,
+    fuel: 'TSI ACT',
+    capacity: '1.5',
+    gearbox: 'DQ200-7F',
+    trainingSchedule: {
+      from: 'Monday',
+      to: 'Friday',
+      training: 'Diagnostics'
+    }
+  },
+  {
+    id: '7',
+    sl: 10,
+    academyLocation: 'Pune',
+    brand: 'SA',
+    model: 'Superb',
+    name: 'SUPERB GrtSTY TS132/1.8M6F',
+    vehicleRegNo: 'MH20DV1650',
+    vinNo: 'TMBBLANP5GA300004',
+    insuranceValidityDate: '2026-01-29',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '2026-02-04',
+    pucStatus: 'Valid',
+    allocatedTrainer: 'Ranjeet Thorat',
+    remarks: '',
+    modelYear: 2016,
+    fuel: 'FSI turbo',
+    capacity: '1.8',
+    gearbox: 'MQ350-6F'
+  },
+  {
+    id: '8',
+    sl: 21,
+    academyLocation: 'Pune',
+    brand: 'VW',
+    model: 'Virtus',
+    name: 'VIRTUS 1.0L TSI 85kW AT Topline',
+    vehicleRegNo: 'MH14KN0378',
+    vinNo: 'MEXC22D21NT000259',
+    insuranceValidityDate: '2025-11-13',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '2025-04-21',
+    pucStatus: 'Expired',
+    allocatedTrainer: 'Sanjay Borade',
+    remarks: 'Breakdown - Vehicle not moving',
+    modelYear: 2022,
+    fuel: 'TSI',
+    capacity: '1.0',
+    gearbox: 'AQ250-6F'
+  },
+  {
+    id: '9',
+    sl: 22,
+    academyLocation: 'Pune',
+    brand: 'AU',
+    model: 'e-Tron',
+    name: 'e-tron Spb 300',
+    vehicleRegNo: 'MH14JR3793',
+    vinNo: 'WAUZCMGE2MB034889',
+    insuranceValidityDate: '2026-08-01',
+    insuranceStatus: 'Valid',
+    pucValidityDate: '',
+    pucStatus: 'NA',
+    allocatedTrainer: 'Dattaprasad Duble',
+    remarks: '',
+    modelYear: 2021,
+    fuel: 'Electric',
+    capacity: 'NA',
+    gearbox: 'NA'
   }
 ];
 
-const initialServiceForm: Omit<ServiceRecord, 'id' | 'createdAt'> = {
-  vehicleModel: '',
-  licensePlate: '',
-  serviceType: 'routine',
-  description: '',
-  serviceDate: '',
-  nextServiceDate: '',
-  cost: 0,
-  mileageAtService: 0,
-  technician: '',
-  location: '',
-  status: 'scheduled',
-  priority: 'medium',
-  notes: ''
-};
-
-export function ServiceRecords() {
-  const [serviceRecords, setServiceRecords] = useState<ServiceRecord[]>(mockServiceRecords);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<ServiceRecord | null>(null);
-  const [serviceForm, setServiceForm] = useState<Omit<ServiceRecord, 'id' | 'createdAt'>>(initialServiceForm);
+export default function ServiceRecords() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [priorityFilter, setPriorityFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('all');
+  const [brandFilter, setBrandFilter] = useState('all');
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const filteredRecords = serviceRecords.filter(record => {
-    const matchesSearch = 
-      record.vehicleModel.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.licensePlate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      record.technician.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredRecords = mockVehicleRecords.filter(record => {
+    const matchesSearch = record.vehicleRegNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         record.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         record.allocatedTrainer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         record.brand.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesType = typeFilter === 'all' || record.serviceType === typeFilter;
-    const matchesStatus = statusFilter === 'all' || record.status === statusFilter;
-    const matchesPriority = priorityFilter === 'all' || record.priority === priorityFilter;
+    const matchesStatus = statusFilter === 'all' || 
+                         (statusFilter === 'insurance-expired' && record.insuranceStatus === 'Expired') ||
+                         (statusFilter === 'puc-expired' && record.pucStatus === 'Expired') ||
+                         (statusFilter === 'active' && record.insuranceStatus === 'Valid');
     
-    return matchesSearch && matchesType && matchesStatus && matchesPriority;
+    const matchesLocation = locationFilter === 'all' || record.academyLocation === locationFilter;
+    const matchesBrand = brandFilter === 'all' || record.brand === brandFilter;
+    
+    return matchesSearch && matchesStatus && matchesLocation && matchesBrand;
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleViewDetails = (recordId: string) => {
+    toast({
+      title: "Vehicle Details",
+      description: `Viewing details for vehicle ${recordId}`,
+    });
+  };
+
+  const handleDownloadReport = (recordId: string) => {
     setLoading(true);
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (editingRecord) {
-        setServiceRecords(prev => prev.map(record => 
-          record.id === editingRecord.id 
-            ? { ...record, ...serviceForm }
-            : record
-        ));
-        toast.success('Service record updated successfully');
-      } else {
-        const newRecord: ServiceRecord = {
-          ...serviceForm,
-          id: Date.now().toString(),
-          createdAt: new Date().toISOString().split('T')[0]
-        };
-        setServiceRecords(prev => [...prev, newRecord]);
-        toast.success('Service record created successfully');
-      }
-      resetForm();
-    } catch (error) {
-      toast.error('Failed to save service record');
-    } finally {
+    setTimeout(() => {
       setLoading(false);
-    }
+      toast({
+        title: "Report Downloaded",
+        description: `Vehicle report for ${recordId} has been downloaded.`,
+      });
+    }, 1000);
   };
 
-  const handleEdit = (record: ServiceRecord) => {
-    setEditingRecord(record);
-    setServiceForm(record);
-    setIsDialogOpen(true);
+  const getInsuranceStatusBadge = (status: string) => {
+    return status === 'Valid' ? 
+      <Badge variant="default" className="bg-green-100 text-green-800">Valid</Badge> :
+      <Badge variant="destructive">Expired</Badge>;
   };
 
-  const resetForm = () => {
-    setServiceForm(initialServiceForm);
-    setEditingRecord(null);
-    setIsDialogOpen(false);
+  const getPucStatusBadge = (status: string) => {
+    if (status === 'NA') return <Badge variant="outline">N/A</Badge>;
+    return status === 'Valid' ? 
+      <Badge variant="default" className="bg-green-100 text-green-800">Valid</Badge> :
+      <Badge variant="destructive">Expired</Badge>;
   };
 
-  const getStatusBadge = (status: ServiceRecord['status']) => {
-    switch (status) {
-      case 'scheduled':
-        return <Badge variant="outline" className="border-primary text-primary">Scheduled</Badge>;
-      case 'in-progress':
-        return <Badge className="bg-warning text-warning-foreground">In Progress</Badge>;
-      case 'completed':
-        return <Badge className="bg-success text-success-foreground">Completed</Badge>;
-      case 'cancelled':
-        return <Badge variant="destructive">Cancelled</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
+  const totalVehicles = mockVehicleRecords.length;
+  const validInsurance = mockVehicleRecords.filter(r => r.insuranceStatus === 'Valid').length;
+  const expiredPuc = mockVehicleRecords.filter(r => r.pucStatus === 'Expired').length;
+  const totalCostIncurred = mockVehicleRecords.reduce((sum, record) => sum + (record.costIncurred || 0), 0);
 
-  const getPriorityBadge = (priority: ServiceRecord['priority']) => {
-    switch (priority) {
-      case 'critical':
-        return <Badge variant="destructive">Critical</Badge>;
-      case 'high':
-        return <Badge className="bg-warning text-warning-foreground">High</Badge>;
-      case 'medium':
-        return <Badge variant="outline">Medium</Badge>;
-      case 'low':
-        return <Badge variant="secondary">Low</Badge>;
-      default:
-        return <Badge variant="outline">{priority}</Badge>;
-    }
-  };
-
-  const getServiceTypeBadge = (type: ServiceRecord['serviceType']) => {
-    switch (type) {
-      case 'routine':
-        return <Badge className="bg-primary text-primary-foreground">Routine</Badge>;
-      case 'repair':
-        return <Badge className="bg-warning text-warning-foreground">Repair</Badge>;
-      case 'inspection':
-        return <Badge variant="outline">Inspection</Badge>;
-      case 'emergency':
-        return <Badge variant="destructive">Emergency</Badge>;
-      default:
-        return <Badge variant="outline">{type}</Badge>;
-    }
-  };
-
-  const serviceStats = {
-    total: serviceRecords.length,
-    scheduled: serviceRecords.filter(r => r.status === 'scheduled').length,
-    inProgress: serviceRecords.filter(r => r.status === 'in-progress').length,
-    totalCost: serviceRecords.reduce((sum, r) => sum + r.cost, 0),
-  };
+  const uniqueLocations = [...new Set(mockVehicleRecords.map(r => r.academyLocation))];
+  const uniqueBrands = [...new Set(mockVehicleRecords.map(r => r.brand))];
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Service Records</h1>
-          <p className="text-muted-foreground">
-            Track vehicle maintenance and service history
-          </p>
+          <h1 className="text-3xl font-bold">Vehicle Records</h1>
+          <p className="text-muted-foreground">Comprehensive vehicle management and compliance tracking</p>
         </div>
-        
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => resetForm()} className="bg-gradient-primary hover:bg-primary-hover">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Service Record
-            </Button>
-          </DialogTrigger>
-          
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingRecord ? 'Edit Service Record' : 'Add New Service Record'}
-              </DialogTitle>
-              <DialogDescription>
-                {editingRecord ? 'Update service record information' : 'Create a new vehicle service record'}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="vehicleModel">Vehicle Model</Label>
-                  <Input
-                    id="vehicleModel"
-                    value={serviceForm.vehicleModel}
-                    onChange={(e) => setServiceForm(prev => ({ ...prev, vehicleModel: e.target.value }))}
-                    placeholder="Skoda Octavia"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="licensePlate">License Plate</Label>
-                  <Input
-                    id="licensePlate"
-                    value={serviceForm.licensePlate}
-                    onChange={(e) => setServiceForm(prev => ({ ...prev, licensePlate: e.target.value }))}
-                    placeholder="SK-001-AB"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="serviceType">Service Type</Label>
-                  <Select
-                    value={serviceForm.serviceType}
-                    onValueChange={(value: ServiceRecord['serviceType']) => 
-                      setServiceForm(prev => ({ ...prev, serviceType: value }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="routine">Routine Maintenance</SelectItem>
-                      <SelectItem value="repair">Repair</SelectItem>
-                      <SelectItem value="inspection">Inspection</SelectItem>
-                      <SelectItem value="emergency">Emergency</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="priority">Priority</Label>
-                  <Select
-                    value={serviceForm.priority}
-                    onValueChange={(value: ServiceRecord['priority']) => 
-                      setServiceForm(prev => ({ ...prev, priority: value }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="critical">Critical</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Service Description</Label>
-                <Input
-                  id="description"
-                  value={serviceForm.description}
-                  onChange={(e) => setServiceForm(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Oil change and filter replacement"
-                  required
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="serviceDate">Service Date</Label>
-                  <Input
-                    id="serviceDate"
-                    type="date"
-                    value={serviceForm.serviceDate}
-                    onChange={(e) => setServiceForm(prev => ({ ...prev, serviceDate: e.target.value }))}
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="nextServiceDate">Next Service Date</Label>
-                  <Input
-                    id="nextServiceDate"
-                    type="date"
-                    value={serviceForm.nextServiceDate}
-                    onChange={(e) => setServiceForm(prev => ({ ...prev, nextServiceDate: e.target.value }))}
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="cost">Cost ($)</Label>
-                  <Input
-                    id="cost"
-                    type="number"
-                    value={serviceForm.cost}
-                    onChange={(e) => setServiceForm(prev => ({ ...prev, cost: parseFloat(e.target.value) || 0 }))}
-                    placeholder="150"
-                    min="0"
-                    step="0.01"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="mileageAtService">Mileage at Service</Label>
-                  <Input
-                    id="mileageAtService"
-                    type="number"
-                    value={serviceForm.mileageAtService}
-                    onChange={(e) => setServiceForm(prev => ({ ...prev, mileageAtService: parseInt(e.target.value) || 0 }))}
-                    placeholder="45000"
-                    min="0"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="technician">Technician</Label>
-                  <Input
-                    id="technician"
-                    value={serviceForm.technician}
-                    onChange={(e) => setServiceForm(prev => ({ ...prev, technician: e.target.value }))}
-                    placeholder="John Mechanic"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="location">Service Location</Label>
-                  <Input
-                    id="location"
-                    value={serviceForm.location}
-                    onChange={(e) => setServiceForm(prev => ({ ...prev, location: e.target.value }))}
-                    placeholder="Service Center A"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  value={serviceForm.status}
-                  onValueChange={(value: ServiceRecord['status']) => 
-                    setServiceForm(prev => ({ ...prev, status: value }))
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="scheduled">Scheduled</SelectItem>
-                    <SelectItem value="in-progress">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  value={serviceForm.notes || ''}
-                  onChange={(e) => setServiceForm(prev => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Additional notes about the service..."
-                  rows={3}
-                />
-              </div>
-              
-              <div className="flex justify-end space-x-2 pt-4">
-                <Button type="button" variant="outline" onClick={resetForm}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={loading} className="bg-gradient-primary hover:bg-primary-hover">
-                  {loading ? 'Saving...' : editingRecord ? 'Update Record' : 'Create Record'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Vehicle
+        </Button>
       </div>
 
-      {/* Service Statistics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="Total Services"
-          value={serviceStats.total}
-          description="All service records"
-          icon={Wrench}
-          trend={{ value: 12, isPositive: true }}
-        />
-        <StatCard
-          title="Scheduled"
-          value={serviceStats.scheduled}
-          description="Upcoming services"
-          icon={Calendar}
-          trend={{ value: 8, isPositive: true }}
-        />
-        <StatCard
-          title="In Progress"
-          value={serviceStats.inProgress}
-          description="Currently servicing"
-          icon={AlertTriangle}
-        />
-        <StatCard
-          title="Total Cost"
-          value={`$${serviceStats.totalCost.toLocaleString()}`}
-          description="Service expenses"
-          icon={CheckCircle}
-          trend={{ value: 15, isPositive: false }}
-        />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Vehicles</CardTitle>
+            <Car className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalVehicles}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Valid Insurance</CardTitle>
+            <Shield className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{validInsurance}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Expired PUC</CardTitle>
+            <AlertCircle className="h-4 w-4 text-red-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{expiredPuc}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Cost Incurred</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₹{totalCostIncurred.toLocaleString()}</div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Filters and Search */}
-      <Card className="card-elevated">
+      {/* Filters */}
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Filter className="h-5 w-5" />
-            <span>Filter & Search Records</span>
-          </CardTitle>
+          <CardTitle>Search & Filter</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by vehicle, license plate, description, or technician..."
+                  placeholder="Search by vehicle reg, name, trainer, or brand..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
-            
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="routine">Routine</SelectItem>
-                <SelectItem value="repair">Repair</SelectItem>
-                <SelectItem value="inspection">Inspection</SelectItem>
-                <SelectItem value="emergency">Emergency</SelectItem>
-              </SelectContent>
-            </Select>
-            
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="All Status" />
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="scheduled">Scheduled</SelectItem>
-                <SelectItem value="in-progress">In Progress</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="active">Active (Valid Insurance)</SelectItem>
+                <SelectItem value="insurance-expired">Insurance Expired</SelectItem>
+                <SelectItem value="puc-expired">PUC Expired</SelectItem>
               </SelectContent>
             </Select>
-            
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="All Priority" />
+            <Select value={locationFilter} onValueChange={setLocationFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filter by location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Priority</SelectItem>
-                <SelectItem value="critical">Critical</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="all">All Locations</SelectItem>
+                {uniqueLocations.map(location => (
+                  <SelectItem key={location} value={location}>{location}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={brandFilter} onValueChange={setBrandFilter}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Filter by brand" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Brands</SelectItem>
+                {uniqueBrands.map(brand => (
+                  <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* Service Records Table */}
-      <Card className="card-elevated">
+      {/* Vehicle Records Table */}
+      <Card>
         <CardHeader>
-          <CardTitle>Service History</CardTitle>
-          <CardDescription>
-            Showing {filteredRecords.length} of {serviceRecords.length} service records
-          </CardDescription>
+          <CardTitle>Vehicle Records ({filteredRecords.length})</CardTitle>
+          <CardDescription>Complete vehicle inventory with compliance status</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Vehicle</TableHead>
-                  <TableHead>Service Type</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Cost</TableHead>
+                  <TableHead>SL</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Vehicle Details</TableHead>
+                  <TableHead>Registration</TableHead>
+                  <TableHead>Insurance</TableHead>
+                  <TableHead>PUC</TableHead>
+                  <TableHead>Trainer</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredRecords.map((record) => (
                   <TableRow key={record.id}>
+                    <TableCell className="font-medium">{record.sl}</TableCell>
+                    <TableCell>{record.academyLocation}</TableCell>
                     <TableCell>
-                      <div className="space-y-1">
-                        <div className="font-medium">{record.vehicleModel}</div>
-                        <div className="text-sm text-muted-foreground">{record.licensePlate}</div>
+                      <div>
+                        <div className="font-medium">{record.brand} {record.model}</div>
+                        <div className="text-sm text-muted-foreground">{record.name}</div>
+                        <div className="text-xs text-muted-foreground">{record.fuel} • {record.capacity}L • {record.modelYear}</div>
                       </div>
                     </TableCell>
-                    <TableCell>{getServiceTypeBadge(record.serviceType)}</TableCell>
                     <TableCell>
-                      <div className="space-y-1">
-                        <div className="font-medium">{record.description}</div>
-                        <div className="text-sm text-muted-foreground">
-                          By {record.technician} at {record.location}
+                      <div>
+                        <div className="font-medium">{record.vehicleRegNo}</div>
+                        <div className="text-xs text-muted-foreground">{record.vinNo}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        {getInsuranceStatusBadge(record.insuranceStatus)}
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Till: {new Date(record.insuranceValidityDate).toLocaleDateString()}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="space-y-1">
-                        <div className="font-medium">{record.serviceDate}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {record.mileageAtService.toLocaleString()} km
-                        </div>
+                      <div>
+                        {getPucStatusBadge(record.pucStatus)}
+                        {record.pucValidityDate && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Till: {new Date(record.pucValidityDate).toLocaleDateString()}
+                          </div>
+                        )}
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">${record.cost}</TableCell>
-                    <TableCell>{getStatusBadge(record.status)}</TableCell>
-                    <TableCell>{getPriorityBadge(record.priority)}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEdit(record)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      <div>
+                        <div className="font-medium">{record.allocatedTrainer || 'Unassigned'}</div>
+                        {record.trainingSchedule && (
+                          <div className="text-xs text-muted-foreground">
+                            {record.trainingSchedule.from} - {record.trainingSchedule.to}<br/>
+                            {record.trainingSchedule.training}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {record.costIncurred && (
+                          <div className="font-medium text-red-600">
+                            Cost: ₹{record.costIncurred.toLocaleString()}
+                          </div>
+                        )}
+                        {record.remarks && (
+                          <div className="text-xs text-muted-foreground mt-1 max-w-[200px] truncate" title={record.remarks}>
+                            {record.remarks}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleViewDetails(record.id)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDownloadReport(record.id)}
+                          disabled={loading}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
