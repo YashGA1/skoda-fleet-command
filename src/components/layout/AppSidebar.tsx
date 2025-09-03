@@ -46,9 +46,9 @@ const navigationItems: Record<UserRole, Array<{
   ],
   trainer: [
     { title: 'Dashboard', url: '/trainer', icon: Home, group: 'Overview' },
-    { title: 'Book Vehicle', url: '/trainer/book', icon: Car, group: 'Booking' },
-    { title: 'My Bookings', url: '/trainer/bookings', icon: Calendar, group: 'Booking' },
-    { title: 'Training Materials', url: '/trainer/materials', icon: BookOpen, group: 'Resources' },
+    { title: 'Book Vehicle', url: '/trainer/book-vehicle', icon: Car, group: 'Booking' },
+    { title: 'My Bookings', url: '/trainer/my-bookings', icon: Calendar, group: 'Booking' },
+    { title: 'Return Vehicle', url: '/trainer/return-vehicle', icon: ArrowLeftRight, group: 'Booking' },
   ],
   security: [
     { title: 'Dashboard', url: '/security', icon: Home, group: 'Overview' },

@@ -327,27 +327,18 @@ export function VehicleReturns() {
                     <TableCell>{getStatusBadge(ret.status)}</TableCell>
                     <TableCell>{getConditionBadge(ret.condition)}</TableCell>
                     <TableCell>
-                      {ret.status === 'active' || ret.status === 'overdue' ? (
-                        <div className="flex space-x-2">
-                          <Button
-                            size="sm"
-                            onClick={() => handleProcessReturn(ret.id, 'good', 50000)}
-                            disabled={processingReturn === ret.id}
-                            className="h-8"
-                          >
-                            {processingReturn === ret.id ? 'Processing...' : 'Process Return'}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleProcessReturn(ret.id, 'damaged', 50000, 'Damage reported')}
-                            disabled={processingReturn === ret.id}
-                            className="h-8"
-                          >
-                            Report Damage
-                          </Button>
-                        </div>
-                      ) : (
+                        {ret.status === 'active' || ret.status === 'overdue' ? (
+                          <div className="flex space-x-2">
+                            <Button
+                              size="sm"
+                              onClick={() => handleProcessReturn(ret.id, 'good', 50000)}
+                              disabled={processingReturn === ret.id}
+                              className="h-8"
+                            >
+                              {processingReturn === ret.id ? 'Processing...' : 'Process Return'}
+                            </Button>
+                          </div>
+                        ) : (
                         <div className="flex space-x-2">
                           <Button size="sm" variant="ghost" className="h-8">
                             View Details

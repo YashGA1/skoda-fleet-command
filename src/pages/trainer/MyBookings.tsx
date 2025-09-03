@@ -26,7 +26,7 @@ export function MyBookings() {
     const matchesSearch = 
       booking.purpose.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vehicle?.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      vehicle?.licensePlate.toLowerCase().includes(searchTerm.toLowerCase());
+      vehicle?.regNo.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
     
@@ -64,8 +64,9 @@ export function MyBookings() {
     }
   };
 
-  const getVehicleInfo = (vehicleId: string) => {
-    return vehicles.find(v => v.id === vehicleId);
+  const getVehicleDetails = (booking: any) => {
+    const vehicle = vehicles.find(v => v.id === booking.vehicleId);
+    return vehicle ? `${vehicle.brand} ${vehicle.model} (${vehicle.regNo})` : 'Unknown Vehicle';
   };
 
   const stats = {
@@ -209,7 +210,7 @@ export function MyBookings() {
               </TableHeader>
               <TableBody>
                 {filteredBookings.map((booking) => {
-                  const vehicle = getVehicleInfo(booking.vehicleId);
+                  const vehicle = vehicles.find(v => v.id === booking.vehicleId);
                   return (
                     <TableRow key={booking.id}>
                       <TableCell>
@@ -218,7 +219,7 @@ export function MyBookings() {
                             {vehicle ? `${vehicle.brand} ${vehicle.model}` : 'Vehicle not found'}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {vehicle?.licensePlate}
+                            {vehicle?.regNo}
                           </p>
                         </div>
                       </TableCell>

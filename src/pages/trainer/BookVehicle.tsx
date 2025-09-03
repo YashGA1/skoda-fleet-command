@@ -6,14 +6,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Car, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Car, Calendar, MapPin, Fuel, Gauge } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useVehicles } from '@/hooks/useVehicles';
 import { useBookings } from '@/hooks/useBookings';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
-type BookingStep = 'brand' | 'vehicle' | 'details' | 'confirmation';
+type BookingStep = 'location' | 'vehicle' | 'details' | 'confirmation';
 
 export function BookVehicle() {
   const navigate = useNavigate();
@@ -22,8 +22,8 @@ export function BookVehicle() {
   const { createBooking } = useBookings();
   const { toast } = useToast();
 
-  const [currentStep, setCurrentStep] = useState<BookingStep>('brand');
-  const [selectedBrand, setSelectedBrand] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState<BookingStep>('location');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedVehicle, setSelectedVehicle] = useState<string>('');
   const [bookingForm, setBookingForm] = useState({
     startDate: '',
@@ -33,18 +33,17 @@ export function BookVehicle() {
     notes: ''
   });
 
-  const availableVehicles = vehicles.filter(
-    v => v.brand === selectedBrand && v.status === 'Available'
+  const uniqueLocations = [...new Set(vehicles.map(v => v.location))];
+  
+  const availableVehicles = vehicles.filter(vehicle => 
+    vehicle.status === 'Active' && 
+    vehicle.location === selectedLocation
   );
 
   const selectedVehicleData = vehicles.find(v => v.id === selectedVehicle);
 
-  const getBrandLogo = (brand: string) => {
-    return brand.toLowerCase(); // Would be actual logo paths in production
-  };
-
-  const handleBrandSelect = (brand: string) => {
-    setSelectedBrand(brand);
+  const handleLocationSelect = (location: string) => {
+    setSelectedLocation(location);
     setSelectedVehicle('');
     setCurrentStep('vehicle');
   };
@@ -73,38 +72,44 @@ export function BookVehicle() {
       });
 
       setCurrentStep('confirmation');
+      
+      toast({
+        title: "Booking Submitted",
+        description: "Your vehicle booking request has been submitted for approval.",
+      });
     } catch (error) {
-      console.error('Booking failed:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit booking. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const renderStepContent = () => {
     switch (currentStep) {
-      case 'brand':
+      case 'location':
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Choose Brand</h2>
-              <p className="text-muted-foreground">Select the vehicle brand for your training session</p>
+              <h2 className="text-2xl font-bold mb-2">Choose Location</h2>
+              <p className="text-muted-foreground">Select the training academy location</p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-6">
-              {['Skoda', 'Volkswagen', 'Audi'].map((brand) => (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {uniqueLocations.map((location) => (
                 <Card 
-                  key={brand}
+                  key={location}
                   className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105"
-                  onClick={() => handleBrandSelect(brand)}
+                  onClick={() => handleLocationSelect(location)}
                 >
-                  <CardContent className="p-8 text-center">
-                    <div className={`text-6xl font-bold mb-4 ${
-                      brand === 'Skoda' ? 'text-skoda' : 
-                      brand === 'Volkswagen' ? 'text-vw' : 'text-audi'
-                    }`}>
-                      {brand.charAt(0)}
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <MapPin className="h-8 w-8 text-primary" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">{brand}</h3>
+                    <h3 className="text-lg font-semibold mb-2">{location}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {vehicles.filter(v => v.brand === brand && v.status === 'Available').length} available
+                      {vehicles.filter(v => v.location === location && v.status === 'Active').length} vehicles available
                     </p>
                   </CardContent>
                 </Card>
@@ -117,13 +122,13 @@ export function BookVehicle() {
         return (
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => setCurrentStep('brand')}>
+              <Button variant="ghost" onClick={() => setCurrentStep('location')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Brands
+                Back to Locations
               </Button>
               <div>
-                <h2 className="text-2xl font-bold">Available {selectedBrand} Vehicles</h2>
-                <p className="text-muted-foreground">Choose a vehicle for your booking</p>
+                <h2 className="text-2xl font-bold">Available Vehicles - {selectedLocation}</h2>
+                <p className="text-muted-foreground">Choose a vehicle for your training session</p>
               </div>
             </div>
 
@@ -138,36 +143,31 @@ export function BookVehicle() {
                     onClick={() => handleVehicleSelect(vehicle.id)}
                   >
                     <CardContent className="p-6">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <Car className="h-8 w-8 text-primary" />
-                        <div>
-                          <h3 className="font-semibold">{vehicle.model}</h3>
-                          <p className="text-sm text-muted-foreground">{vehicle.year}</p>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-semibold">{vehicle.brand} {vehicle.model}</h3>
+                          <Badge variant="secondary">{vehicle.modelYear}</Badge>
                         </div>
+                        
+                        <div className="space-y-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Car className="h-4 w-4" />
+                            <span>{vehicle.regNo}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Fuel className="h-4 w-4" />
+                            <span>{vehicle.fuelType}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Gauge className="h-4 w-4" />
+                            <span>{vehicle.engine}</span>
+                          </div>
+                        </div>
+
+                        <Badge className="w-full justify-center bg-green-100 text-green-800">
+                          Available
+                        </Badge>
                       </div>
-                      
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-sm">License:</span>
-                          <span className="text-sm font-medium">{vehicle.licensePlate}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm">Fuel:</span>
-                          <span className="text-sm">{vehicle.fuelType}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm">Mileage:</span>
-                          <span className="text-sm">{vehicle.mileage.toLocaleString()} km</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm">Location:</span>
-                          <span className="text-sm">{vehicle.location}</span>
-                        </div>
-                      </div>
-                      
-                      <Badge className="mt-4 bg-success text-success-foreground">
-                        {vehicle.status}
-                      </Badge>
                     </CardContent>
                   </Card>
                 ))}
@@ -176,7 +176,8 @@ export function BookVehicle() {
 
             {!vehiclesLoading && availableVehicles.length === 0 && (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">No {selectedBrand} vehicles available at the moment.</p>
+                <Car className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">No vehicles available at {selectedLocation} currently.</p>
               </div>
             )}
           </div>
@@ -211,26 +212,26 @@ export function BookVehicle() {
                           <h3 className="font-semibold text-lg">
                             {selectedVehicleData.brand} {selectedVehicleData.model}
                           </h3>
-                          <p className="text-muted-foreground">{selectedVehicleData.year}</p>
+                          <p className="text-muted-foreground">{selectedVehicleData.modelYear}</p>
                         </div>
                       </div>
                       
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-muted-foreground">License Plate:</span>
-                          <p className="font-medium">{selectedVehicleData.licensePlate}</p>
+                          <span className="text-muted-foreground">Registration:</span>
+                          <p className="font-medium">{selectedVehicleData.regNo}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Location:</span>
+                          <p className="font-medium">{selectedVehicleData.location}</p>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Fuel Type:</span>
                           <p className="font-medium">{selectedVehicleData.fuelType}</p>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Color:</span>
-                          <p className="font-medium">{selectedVehicleData.color}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Location:</span>
-                          <p className="font-medium">{selectedVehicleData.location}</p>
+                          <span className="text-muted-foreground">Engine:</span>
+                          <p className="font-medium">{selectedVehicleData.engine}</p>
                         </div>
                       </div>
                     </div>
@@ -270,18 +271,18 @@ export function BookVehicle() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="purpose">Purpose</Label>
+                      <Label htmlFor="purpose">Training Purpose</Label>
                       <Input
                         id="purpose"
                         value={bookingForm.purpose}
                         onChange={(e) => setBookingForm(prev => ({ ...prev, purpose: e.target.value }))}
-                        placeholder="e.g., Advanced Driving Training, Safety Course"
+                        placeholder="e.g., BQ Fundamental Training, Technology Module"
                         required
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="urgency">Urgency</Label>
+                      <Label htmlFor="urgency">Priority</Label>
                       <Select
                         value={bookingForm.urgency}
                         onValueChange={(value: 'normal' | 'high') => 
@@ -309,7 +310,7 @@ export function BookVehicle() {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full btn-skoda">
+                    <Button type="submit" className="w-full">
                       <Calendar className="h-4 w-4 mr-2" />
                       Submit Booking Request
                     </Button>
@@ -340,8 +341,8 @@ export function BookVehicle() {
                 <Button 
                   variant="outline" 
                   onClick={() => {
-                    setCurrentStep('brand');
-                    setSelectedBrand('');
+                    setCurrentStep('location');
+                    setSelectedLocation('');
                     setSelectedVehicle('');
                     setBookingForm({
                       startDate: '',
@@ -369,12 +370,12 @@ export function BookVehicle() {
     <div className="space-y-6 animate-fade-in">
       {/* Progress Indicator */}
       <div className="flex items-center justify-center space-x-2 mb-8">
-        {['brand', 'vehicle', 'details', 'confirmation'].map((step, index) => (
+        {['location', 'vehicle', 'details', 'confirmation'].map((step, index) => (
           <div key={step} className="flex items-center">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
               currentStep === step 
                 ? 'bg-primary text-primary-foreground' 
-                : index < ['brand', 'vehicle', 'details', 'confirmation'].indexOf(currentStep)
+                : index < ['location', 'vehicle', 'details', 'confirmation'].indexOf(currentStep)
                   ? 'bg-success text-success-foreground'
                   : 'bg-muted text-muted-foreground'
             }`}>
@@ -382,7 +383,7 @@ export function BookVehicle() {
             </div>
             {index < 3 && (
               <div className={`w-12 h-0.5 mx-2 ${
-                index < ['brand', 'vehicle', 'details', 'confirmation'].indexOf(currentStep)
+                index < ['location', 'vehicle', 'details', 'confirmation'].indexOf(currentStep)
                   ? 'bg-success'
                   : 'bg-muted'
               }`} />

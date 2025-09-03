@@ -47,8 +47,9 @@ function AppRoutes() {
         
         {/* Trainer Routes */}
         <Route path="/trainer" element={user?.role === 'trainer' ? <TrainerDashboard /> : <Navigate to={`/${user?.role}`} />} />
-        <Route path="/trainer/book" element={user?.role === 'trainer' ? <BookVehicle /> : <Navigate to={`/${user?.role}`} />} />
-        <Route path="/trainer/bookings" element={user?.role === 'trainer' ? <MyBookings /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/trainer/book-vehicle" element={user?.role === 'trainer' ? <BookVehicle /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/trainer/my-bookings" element={user?.role === 'trainer' ? <MyBookings /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/trainer/return-vehicle" element={user?.role === 'trainer' ? <VehicleReturn /> : <Navigate to={`/${user?.role}`} />} />
         
         {/* Security Routes */}
         <Route path="/security" element={user?.role === 'security' ? <SecurityDashboard /> : <Navigate to={`/${user?.role}`} />} />
