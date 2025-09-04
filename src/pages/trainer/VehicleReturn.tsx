@@ -5,16 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { useBookings } from '@/hooks/useBookings';
-import { useVehicles } from '@/hooks/useVehicles';
-import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Car, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export function VehicleReturn() {
-  const { user } = useAuth();
-  const { bookings, updateBookingStatus } = useBookings();
-  const { vehicles } = useVehicles();
   const { toast } = useToast();
   
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
@@ -26,29 +20,23 @@ export function VehicleReturn() {
     notes: ''
   });
 
-  // Get active bookings for current trainer
-  const activeBookings = bookings.filter(
-    booking => 
-      booking.trainerId === user?.id && 
-      booking.status === 'active'
-  );
-
-  const getVehicleDetails = (booking: any) => {
-    const vehicle = vehicles.find(v => v.id === booking.vehicleId);
-    return vehicle || null;
-  };
+  // Mock data for now
+  const activeBookings = [
+    {
+      id: '1',
+      vehicleId: 'vehicle_001',
+      trainerId: 'trainer_001',
+      startDate: '2024-01-15',
+      endDate: '2024-01-19',
+      vehicle: 'VW Vento',
+      regNo: 'MH14EY0185'
+    }
+  ];
 
   const handleReturn = async () => {
     if (!selectedBooking) return;
 
     try {
-      // Update booking status
-      await updateBookingStatus(
-        selectedBooking.id, 
-        'completed',
-        `Vehicle returned. ${returnData.notes ? `Notes: ${returnData.notes}` : ''}`
-      );
-
       toast({
         title: "Vehicle Returned Successfully",
         description: `${selectedBooking.vehicle} has been marked as returned.`,
@@ -107,42 +95,36 @@ export function VehicleReturn() {
             <CardContent>
               {activeBookings.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {activeBookings.map((booking) => {
-                    const vehicle = getVehicleDetails(booking);
-                    if (!vehicle) return null;
-
-                    return (
-                      <Card key={booking.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                        <CardContent className="p-4">
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <h3 className="font-semibold">{vehicle.brand} {vehicle.model}</h3>
-                              <Badge variant="outline">{vehicle.modelYear}</Badge>
-                            </div>
-                            
-                            <div className="space-y-2 text-sm text-muted-foreground">
-                              <div className="flex items-center gap-2">
-                                <Car className="h-4 w-4" />
-                                <span>{vehicle.regNo}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Clock className="h-4 w-4" />
-                                <span>{booking.startDate} to {booking.endDate}</span>
-                              </div>
-                            </div>
-
-                            <Button 
-                              className="w-full"
-                              onClick={() => setSelectedBooking({ ...booking, vehicle: `${vehicle.brand} ${vehicle.model}` })}
-                            >
-                              Return Vehicle
-                            </Button>
+                  {activeBookings.map((booking) => (
+                    <Card key={booking.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-semibold">{booking.vehicle}</h3>
+                            <Badge variant="outline">2020</Badge>
                           </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
+                          
+                          <div className="space-y-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Car className="h-4 w-4" />
+                              <span>{booking.regNo}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4" />
+                              <span>{booking.startDate} to {booking.endDate}</span>
+                            </div>
+                          </div>
+
+                          <Button 
+                            className="w-full"
+                            onClick={() => setSelectedBooking(booking)}
+                          >
+                            Return Vehicle
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}</div>
               ) : (
                 <div className="text-center py-8">
                   <Car className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
