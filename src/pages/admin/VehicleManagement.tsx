@@ -52,11 +52,12 @@ export function VehicleManagement() {
     }
   };
 
-  const getComplianceBadge = (date: Date | null, label: string) => {
+  const getComplianceBadge = (date: string | null, label: string) => {
     if (!date) return <Badge variant="outline">N/A</Badge>;
     
+    const dateObj = new Date(date);
     const today = new Date();
-    const diffTime = date.getTime() - today.getTime();
+    const diffTime = dateObj.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     if (diffDays < 0) {
@@ -229,13 +230,13 @@ export function VehicleManagement() {
                     <TableCell>
                       {getComplianceBadge(vehicle.insuranceValidDate, "Insurance")}
                       <div className="text-xs text-muted-foreground mt-1">
-                        {vehicle.insuranceValidDate?.toLocaleDateString()}
+                        {vehicle.insuranceValidDate ? new Date(vehicle.insuranceValidDate).toLocaleDateString() : 'N/A'}
                       </div>
                     </TableCell>
                     <TableCell>
                       {getComplianceBadge(vehicle.pucValidDate, "PUC")}
                       <div className="text-xs text-muted-foreground mt-1">
-                        {vehicle.pucValidDate?.toLocaleDateString()}
+                        {vehicle.pucValidDate ? new Date(vehicle.pucValidDate).toLocaleDateString() : 'N/A'}
                       </div>
                     </TableCell>
                     <TableCell>

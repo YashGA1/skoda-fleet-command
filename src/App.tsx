@@ -19,6 +19,7 @@ import { IssueKeys } from "@/pages/security/IssueKeys";
 import { VehicleReturns } from "@/pages/security/VehicleReturns";
 import { BookVehicle } from "@/pages/trainer/BookVehicle";
 import { MyBookings } from "@/pages/trainer/MyBookings";
+import { VehicleReturn } from "@/pages/trainer/VehicleReturn";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
