@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 
 export function MyBookings() {
   const { user } = useAuth();
-  const { bookings, loading: bookingsLoading, updateBookingStatus, deleteBooking } = useBookings();
+  const { bookings, loading: bookingsLoading, updateBookingStatus, deleteBooking, createDamageReport } = useBookings();
   const { vehicles } = useVehicles();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,11 +77,18 @@ export function MyBookings() {
 
   const handleDamageReport = async () => {
     try {
-      // Here you would normally save the damage report to the database
-      toast({
-        title: "Damage Report Submitted",
-        description: "Your damage report has been submitted to the admin team.",
+      const booking = bookings.find(b => b.id === damageReport.bookingId);
+      if (!booking) return;
+
+      await createDamageReport({
+        bookingId: damageReport.bookingId,
+        trainerId: user?.id || '',
+        trainerName: user?.name || '',
+        vehicleId: booking.vehicleId,
+        condition: damageReport.condition as 'Good' | 'Minor Issues' | 'Damage',
+        description: damageReport.damageDescription,
       });
+
       setDamageReport({
         bookingId: '',
         condition: 'Good',
