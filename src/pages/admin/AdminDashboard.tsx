@@ -1,11 +1,8 @@
-import { Car, Users, Calendar, Settings, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Car, Users, Calendar, Settings, TrendingUp, AlertTriangle } from 'lucide-react';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useBookings } from '@/hooks/useBookings';
-import { useVehicles } from '@/hooks/useVehicles';
-import { format } from 'date-fns';
 
 const mockStats = {
   totalVehicles: 45,
@@ -59,27 +56,6 @@ const mockMaintenanceAlerts = [
 ];
 
 export function AdminDashboard() {
-  const { damageReports, resolveDamageReport } = useBookings();
-  const { vehicles } = useVehicles();
-
-  const pendingReports = damageReports.filter(report => !report.resolved);
-
-  const handleResolveReport = async (reportId: string) => {
-    await resolveDamageReport(reportId);
-  };
-
-  const getConditionBadge = (condition: string) => {
-    switch (condition) {
-      case 'Good':
-        return <Badge className="bg-success text-success-foreground">Good</Badge>;
-      case 'Minor Issues':
-        return <Badge className="bg-warning text-warning-foreground">Minor Issues</Badge>;
-      case 'Damage':
-        return <Badge variant="destructive">Damage</Badge>;
-      default:
-        return <Badge variant="outline">{condition}</Badge>;
-    }
-  };
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -152,62 +128,6 @@ export function AdminDashboard() {
           className="border-warning"
         />
       </div>
-
-      {/* Damage Reports Alert */}
-      {pendingReports.length > 0 && (
-        <Card className="border-warning bg-warning/5">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-warning">
-              <AlertTriangle className="h-5 w-5" />
-              <span>Damage Reports Pending</span>
-            </CardTitle>
-            <CardDescription>
-              {pendingReports.length} vehicle damage report{pendingReports.length !== 1 ? 's' : ''} require your attention
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {pendingReports.slice(0, 3).map((report) => {
-                const vehicle = vehicles.find(v => v.id === report.vehicleId);
-                return (
-                  <div
-                    key={report.id}
-                    className="flex items-center justify-between p-3 bg-background rounded-lg"
-                  >
-                    <div className="space-y-1">
-                      <p className="font-medium">
-                        {vehicle ? `${vehicle.brand} ${vehicle.model} (${vehicle.regNo})` : 'Unknown Vehicle'}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Reported by {report.trainerName} on {format(new Date(report.reportedAt), 'MMM dd, yyyy')}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{report.description}</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {getConditionBadge(report.condition)}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleResolveReport(report.id)}
-                        className="text-success hover:text-success"
-                      >
-                        <CheckCircle className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            {pendingReports.length > 3 && (
-              <div className="mt-4 pt-4 border-t">
-                <Button variant="ghost" className="w-full">
-                  View All {pendingReports.length} Reports
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
 
       {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
