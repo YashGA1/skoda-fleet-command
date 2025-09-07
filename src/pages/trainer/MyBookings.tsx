@@ -80,7 +80,7 @@ export function MyBookings() {
       // Here you would normally save the damage report to the database
       toast({
         title: "Damage Report Submitted",
-        description: "Your damage report has been submitted to the security team.",
+        description: "Your damage report has been submitted to the admin team.",
       });
       setDamageReport({
         bookingId: '',
