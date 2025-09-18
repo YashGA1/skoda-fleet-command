@@ -25,16 +25,10 @@ import {
   SidebarHeader,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/auth';
+import { useAuth } from '@/contexts/AuthContext.jsx';
 
 // Navigation items based on user role
-const navigationItems: Record<UserRole, Array<{
-  title: string;
-  url: string;
-  icon: any;
-  group: string;
-}>> = {
+const navigationItems = {
   admin: [
     { title: 'Dashboard', url: '/admin', icon: Home, group: 'Overview' },
     { title: 'Analytics', url: '/admin/analytics', icon: BarChart3, group: 'Overview' },
@@ -71,9 +65,9 @@ export function AppSidebar() {
     }
     acc[item.group].push(item);
     return acc;
-  }, {} as Record<string, typeof items>);
+  }, {});
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
 
   return (
     <Sidebar className="border-r border-border">

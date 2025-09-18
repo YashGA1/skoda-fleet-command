@@ -1,17 +1,7 @@
 import { useState, useEffect } from 'react';
 
-export interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: 'info' | 'warning' | 'error' | 'success';
-  timestamp: Date;
-  read: boolean;
-  actionUrl?: string;
-}
-
 // Mock notifications data
-const mockNotifications: Notification[] = [
+const mockNotifications = [
   {
     id: 'notif_001',
     title: 'Vehicle Maintenance Required',
@@ -60,11 +50,11 @@ const mockNotifications: Notification[] = [
 ];
 
 export function useNotifications() {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] = useState(mockNotifications);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const markAsRead = (id: string) => {
+  const markAsRead = (id) => {
     setNotifications(prev => 
       prev.map(notification => 
         notification.id === id 
@@ -80,7 +70,7 @@ export function useNotifications() {
     );
   };
 
-  const deleteNotification = (id: string) => {
+  const deleteNotification = (id) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
 

@@ -1,23 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-export interface Booking {
-  id: string;
-  vehicleId: string;
-  trainerId: string;
-  trainerName: string;
-  startDate: string;
-  endDate: string;
-  purpose: string;
-  status: 'pending' | 'approved' | 'rejected' | 'active' | 'completed' | 'cancelled';
-  urgency: 'normal' | 'high';
-  notes: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
 // Mock booking data
-const mockBookings: Booking[] = [
+const mockBookings = [
   {
     id: 'booking_001',
     vehicleId: 'vehicle_001',
@@ -91,9 +76,9 @@ const mockBookings: Booking[] = [
 ];
 
 export function useBookings() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const { toast } = useToast();
 
   const fetchBookings = async () => {
@@ -116,9 +101,9 @@ export function useBookings() {
     }
   };
 
-  const createBooking = async (bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const createBooking = async (bookingData) => {
     try {
-      const newBooking: Booking = {
+      const newBooking = {
         ...bookingData,
         id: `booking_${Date.now()}`,
         createdAt: new Date().toISOString(),
@@ -143,7 +128,7 @@ export function useBookings() {
     }
   };
 
-  const updateBookingStatus = async (id: string, status: Booking['status'], notes?: string) => {
+  const updateBookingStatus = async (id, status, notes) => {
     try {
       setBookings(prev => prev.map(booking => 
         booking.id === id 
@@ -171,7 +156,7 @@ export function useBookings() {
     }
   };
 
-  const deleteBooking = async (id: string) => {
+  const deleteBooking = async (id) => {
     try {
       setBookings(prev => prev.filter(booking => booking.id !== id));
       toast({

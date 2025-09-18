@@ -1,13 +1,9 @@
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext.jsx';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppSidebar } from './AppSidebar';
-import { AppHeader } from './AppHeader';
+import { AppSidebar } from './AppSidebar.jsx';
+import { AppHeader } from './AppHeader.jsx';
 
-interface AppLayoutProps {
-  children: React.ReactNode;
-}
-
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout({ children }) {
   const { user } = useAuth();
 
   if (!user) {

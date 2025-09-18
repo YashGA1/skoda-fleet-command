@@ -1,15 +1,9 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { User, AuthState, LoginCredentials, UserRole } from '@/types/auth';
+import React, { createContext, useContext, useState } from 'react';
 
-interface AuthContextType extends AuthState {
-  login: (credentials: LoginCredentials) => Promise<void>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext(undefined);
 
 // Mock users for demonstration
-const mockUsers: Record<string, User> = {
+const mockUsers = {
   'admin@skoda.com': {
     id: '1',
     name: 'John Administrator',
@@ -36,14 +30,14 @@ const mockUsers: Record<string, User> = {
   }
 };
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [authState, setAuthState] = useState<AuthState>({
+export function AuthProvider({ children }) {
+  const [authState, setAuthState] = useState({
     user: null,
     isAuthenticated: false,
     isLoading: false
   });
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (credentials) => {
     setAuthState(prev => ({ ...prev, isLoading: true }));
     
     // Simulate API call delay

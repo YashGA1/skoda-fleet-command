@@ -1,17 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-export interface Trainer {
-  id: string;
-  name: string;
-  location: string;
-  specializations: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
 // Mock trainers data based on VGA Training Cars
-const mockTrainers: Trainer[] = [
+const mockTrainers = [
   {
     id: "trainer_001",
     name: "Mahesh Deshmukh",
@@ -103,9 +94,9 @@ const mockTrainers: Trainer[] = [
 ];
 
 export function useTrainers() {
-  const [trainers, setTrainers] = useState<Trainer[]>([]);
+  const [trainers, setTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const { toast } = useToast();
 
   const fetchTrainers = async () => {
@@ -128,9 +119,9 @@ export function useTrainers() {
     }
   };
 
-  const addTrainer = async (trainerData: Omit<Trainer, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addTrainer = async (trainerData) => {
     try {
-      const newTrainer: Trainer = {
+      const newTrainer = {
         ...trainerData,
         id: `trainer_${Date.now()}`,
         createdAt: new Date().toISOString(),
@@ -155,7 +146,7 @@ export function useTrainers() {
     }
   };
 
-  const updateTrainer = async (id: string, updates: Partial<Omit<Trainer, 'id' | 'createdAt' | 'updatedAt'>>) => {
+  const updateTrainer = async (id, updates) => {
     try {
       setTrainers(prev => prev.map(trainer => 
         trainer.id === id 
@@ -178,7 +169,7 @@ export function useTrainers() {
     }
   };
 
-  const deleteTrainer = async (id: string) => {
+  const deleteTrainer = async (id) => {
     try {
       setTrainers(prev => prev.filter(trainer => trainer.id !== id));
       toast({

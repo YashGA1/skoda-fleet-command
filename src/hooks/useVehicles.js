@@ -1,32 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-export interface Vehicle {
-  id: string;
-  location: string;
-  brand: string;
-  model: string;
-  fullName: string;
-  regNo: string;
-  vinNo: string;
-  fuelType: string;
-  engine: string;
-  gearbox: string;
-  modelYear: number;
-  insuranceValidDate: string;
-  insuranceStatus: 'Valid' | 'Expired';
-  pucValidDate: string | null;
-  pucStatus: 'Valid' | 'Expired' | 'NA';
-  allocatedTrainer: string;
-  status: 'Active' | 'Inactive' | 'Maintenance' | 'Decommissioned';
-  costIncurred: number;
-  remarks: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 // Mock data based on VGA Training Cars
-const mockVehicles: Vehicle[] = [
+const mockVehicles = [
   {
     id: "vehicle_001",
     location: "Pune",
@@ -142,13 +118,12 @@ const mockVehicles: Vehicle[] = [
     createdAt: "2024-01-01T00:00:00Z",
     updatedAt: "2024-01-01T00:00:00Z"
   }
-  // ... continue with more vehicles as needed
 ];
 
 export function useVehicles() {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const { toast } = useToast();
 
   const fetchVehicles = async () => {
@@ -171,9 +146,9 @@ export function useVehicles() {
     }
   };
 
-  const addVehicle = async (vehicleData: Omit<Vehicle, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addVehicle = async (vehicleData) => {
     try {
-      const newVehicle: Vehicle = {
+      const newVehicle = {
         ...vehicleData,
         id: `vehicle_${Date.now()}`,
         createdAt: new Date().toISOString(),
@@ -198,7 +173,7 @@ export function useVehicles() {
     }
   };
 
-  const updateVehicle = async (id: string, updates: Partial<Omit<Vehicle, 'id' | 'createdAt' | 'updatedAt'>>) => {
+  const updateVehicle = async (id, updates) => {
     try {
       setVehicles(prev => prev.map(vehicle => 
         vehicle.id === id 
@@ -221,7 +196,7 @@ export function useVehicles() {
     }
   };
 
-  const deleteVehicle = async (id: string) => {
+  const deleteVehicle = async (id) => {
     try {
       setVehicles(prev => prev.filter(vehicle => vehicle.id !== id));
       toast({

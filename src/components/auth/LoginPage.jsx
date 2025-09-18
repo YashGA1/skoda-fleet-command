@@ -6,8 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Car, Shield, GraduationCap, Settings } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/auth';
+import { useAuth } from '@/contexts/AuthContext.jsx';
 
 const roleConfig = {
   admin: {
@@ -31,20 +30,20 @@ const roleConfig = {
 };
 
 export function LoginPage() {
-  const [selectedRole, setSelectedRole] = useState<UserRole>('admin');
+  const [selectedRole, setSelectedRole] = useState('admin');
   const [email, setEmail] = useState(roleConfig.admin.defaultEmail);
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
   
   const { login, isLoading } = useAuth();
 
-  const handleRoleChange = (role: UserRole) => {
+  const handleRoleChange = (role) => {
     setSelectedRole(role);
     setEmail(roleConfig[role].defaultEmail);
     setError('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
@@ -65,7 +64,6 @@ export function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-hero bg-cover bg-center bg-no-repeat p-4">
       <div className="w-full max-w-md space-y-6">
-        {/* Logo and Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center space-x-2">
             <Car className="h-8 w-8 text-white" />
@@ -86,8 +84,7 @@ export function LoginPage() {
               </div>
             </div>
 
-            {/* Role Selection */}
-            <Tabs value={selectedRole} onValueChange={handleRoleChange as (value: string) => void}>
+            <Tabs value={selectedRole} onValueChange={handleRoleChange}>
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="admin" className="text-xs">Admin</TabsTrigger>
                 <TabsTrigger value="trainer" className="text-xs">Trainer</TabsTrigger>
@@ -136,7 +133,6 @@ export function LoginPage() {
                 {isLoading ? 'Signing In...' : 'Sign In'}
               </Button>
 
-              {/* Demo Credentials */}
               <div className="text-xs text-muted-foreground space-y-1 p-3 bg-muted/50 rounded-lg">
                 <p className="font-medium">Demo Credentials:</p>
                 <p>Email: {config.defaultEmail}</p>
