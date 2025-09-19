@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { useNotifications, Notification } from '@/hooks/useNotifications';
+import { useNotifications } from '@/hooks/useNotifications';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -15,7 +15,7 @@ export function NotificationDropdown() {
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
   const navigate = useNavigate();
 
-  const getNotificationIcon = (type: Notification['type']) => {
+  const getNotificationIcon = (type) => {
     switch (type) {
       case 'error':
         return <AlertCircle className="h-4 w-4 text-destructive" />;
@@ -29,7 +29,7 @@ export function NotificationDropdown() {
     }
   };
 
-  const handleNotificationClick = (notification: Notification) => {
+  const handleNotificationClick = (notification) => {
     markAsRead(notification.id);
     if (notification.actionUrl) {
       navigate(notification.actionUrl);

@@ -44,7 +44,7 @@ export function MyBookings() {
     return matchesSearch && matchesStatus;
   });
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status) => {
     switch (status) {
       case 'pending':
         return <Badge variant="outline">Pending</Badge>;
@@ -63,13 +63,13 @@ export function MyBookings() {
     }
   };
 
-  const getUrgencyBadge = (urgency: string) => {
+  const getUrgencyBadge = (urgency) => {
     return urgency === 'high' ? 
       <Badge variant="destructive">High</Badge> : 
       <Badge variant="outline">Normal</Badge>;
   };
 
-  const handleCancelBooking = async (bookingId: string) => {
+  const handleCancelBooking = async (bookingId) => {
     if (confirm('Are you sure you want to cancel this booking?')) {
       await updateBookingStatus(bookingId, 'cancelled');
     }
@@ -97,7 +97,7 @@ export function MyBookings() {
     }
   };
 
-  const openDamageDialog = (bookingId: string) => {
+  const openDamageDialog = (bookingId) => {
     setDamageReport({
       bookingId,
       condition: 'Good',
@@ -106,7 +106,7 @@ export function MyBookings() {
     });
   };
 
-  const getVehicleDetails = (booking: any) => {
+  const getVehicleDetails = (booking) => {
     const vehicle = vehicles.find(v => v.id === booking.vehicleId);
     return vehicle ? `${vehicle.brand} ${vehicle.model} (${vehicle.regNo})` : 'Unknown Vehicle';
   };

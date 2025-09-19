@@ -13,8 +13,6 @@ import { useBookings } from '@/hooks/useBookings';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
-type BookingStep = 'brand' | 'vehicle' | 'details' | 'confirmation';
-
 export function BookVehicle() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -22,14 +20,14 @@ export function BookVehicle() {
   const { createBooking } = useBookings();
   const { toast } = useToast();
 
-  const [currentStep, setCurrentStep] = useState<BookingStep>('brand');
-  const [selectedBrand, setSelectedBrand] = useState<string>('');
-  const [selectedVehicle, setSelectedVehicle] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState('brand');
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [selectedVehicle, setSelectedVehicle] = useState('');
   const [bookingForm, setBookingForm] = useState({
     startDate: '',
     endDate: '',
     purpose: '',
-    urgency: 'normal' as 'normal' | 'high',
+    urgency: 'normal',
     notes: ''
   });
 
@@ -42,18 +40,18 @@ export function BookVehicle() {
 
   const selectedVehicleData = vehicles.find(v => v.id === selectedVehicle);
 
-  const handleBrandSelect = (brand: string) => {
+  const handleBrandSelect = (brand) => {
     setSelectedBrand(brand);
     setSelectedVehicle('');
     setCurrentStep('vehicle');
   };
 
-  const handleVehicleSelect = (vehicleId: string) => {
+  const handleVehicleSelect = (vehicleId) => {
     setSelectedVehicle(vehicleId);
     setCurrentStep('details');
   };
 
-  const handleBookingSubmit = async (e: React.FormEvent) => {
+  const handleBookingSubmit = async (e) => {
     e.preventDefault();
     
     if (!user || !selectedVehicle) return;
@@ -285,7 +283,7 @@ export function BookVehicle() {
                       <Label htmlFor="urgency">Priority</Label>
                       <Select
                         value={bookingForm.urgency}
-                        onValueChange={(value: 'normal' | 'high') => 
+                        onValueChange={(value) => 
                           setBookingForm(prev => ({ ...prev, urgency: value }))
                         }
                       >

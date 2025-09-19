@@ -20,7 +20,7 @@ export function AppHeader() {
 
   if (!user) return null;
 
-  const getInitials = (name: string) => {
+  const getInitials = (name) => {
     return name
       .split(' ')
       .map(n => n[0])
@@ -28,7 +28,7 @@ export function AppHeader() {
       .toUpperCase();
   };
 
-  const getRoleBadgeVariant = (role: string) => {
+  const getRoleBadgeVariant = (role) => {
     switch (role) {
       case 'admin':
         return 'default';

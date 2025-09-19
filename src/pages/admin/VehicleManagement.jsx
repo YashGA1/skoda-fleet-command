@@ -12,9 +12,9 @@ import { StatCard } from '@/components/dashboard/StatCard';
 export function VehicleManagement() {
   const { vehicles, loading } = useVehicles();
   const [searchTerm, setSearchTerm] = useState('');
-  const [brandFilter, setBrandFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [brandFilter, setBrandFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('all');
 
   const stats = {
     total: vehicles.length,
@@ -37,7 +37,7 @@ export function VehicleManagement() {
     return matchesSearch && matchesBrand && matchesStatus && matchesLocation;
   });
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status) => {
     switch (status) {
       case "Active":
         return "success";
@@ -52,7 +52,7 @@ export function VehicleManagement() {
     }
   };
 
-  const getComplianceBadge = (date: string | null, label: string) => {
+  const getComplianceBadge = (date, label) => {
     if (!date) return <Badge variant="outline">N/A</Badge>;
     
     const dateObj = new Date(date);
@@ -217,7 +217,7 @@ export function VehicleManagement() {
                       <div className="text-sm text-muted-foreground">{vehicle.vinNo}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getStatusBadge(vehicle.status) as any}>
+                      <Badge variant={getStatusBadge(vehicle.status)}>
                         {vehicle.status}
                       </Badge>
                     </TableCell>
