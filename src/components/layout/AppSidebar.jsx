@@ -70,41 +70,51 @@ export function AppSidebar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <Sidebar className="border-r border-border">
-      <SidebarHeader className="p-4 border-b border-border">
+    <Sidebar className="border-r border-sidebar-border bg-sidebar">
+      <SidebarHeader className="p-6 border-b border-sidebar-border">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Car className="h-6 w-6 text-primary" />
+          <div className="p-3 bg-gradient-primary rounded-xl shadow-lg">
+            <Car className="h-6 w-6 text-white" />
           </div>
           {state === "expanded" && (
             <div>
-              <h2 className="text-lg font-semibold">Skoda Fleet</h2>
-              <p className="text-sm text-muted-foreground capitalize">{user.role} Portal</p>
+              <h2 className="text-xl font-bold text-sidebar-foreground">Skoda Fleet</h2>
+              <p className="text-sm text-sidebar-foreground/70 capitalize font-medium">
+                {user.role} Portal
+              </p>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="p-4">
         {Object.entries(groupedItems).map(([groupName, groupItems]) => (
-          <SidebarGroup key={groupName}>
+          <SidebarGroup key={groupName} className="mb-6">
             {state === "expanded" && (
-              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <SidebarGroupLabel className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider mb-3 px-3">
                 {groupName}
               </SidebarGroupLabel>
             )}
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="space-y-1">
                 {groupItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
                       isActive={isActive(item.url)}
-                      className="nav-item"
+                      className={`nav-item rounded-xl transition-all duration-200 ${
+                        isActive(item.url) 
+                          ? 'bg-gradient-primary text-white shadow-lg hover:shadow-colored' 
+                          : 'text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent'
+                      }`}
                     >
-                      <Link to={item.url} className="flex items-center space-x-3 p-3">
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
-                        {state === "expanded" && <span className="font-medium">{item.title}</span>}
+                      <Link to={item.url} className="flex items-center space-x-3 p-3 min-h-[48px]">
+                        <item.icon className={`h-5 w-5 flex-shrink-0 ${
+                          isActive(item.url) ? 'text-white' : 'text-sidebar-primary'
+                        }`} />
+                        {state === "expanded" && (
+                          <span className="font-medium text-sm">{item.title}</span>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

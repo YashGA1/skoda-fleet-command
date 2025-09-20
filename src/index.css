@@ -3,147 +3,148 @@
 @tailwind utilities;
 
 /* Professional Automotive Design System - Skoda Vehicle Management Portal
+Enhanced modern design with beautiful animations and professional styling.
 All colors MUST be HSL. Brand-specific color palette for automotive industry.
 */
 
 @layer base {
   :root {
-    /* Base Colors */
+    /* Base Colors - Enhanced */
     --background: 0 0% 100%;
-    --foreground: 215 25% 16%;
+    --foreground: 224 71% 4%;
 
-    /* Card Components */
+    /* Card Components - Enhanced with subtle gradients */
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 16%;
+    --card-foreground: 224 71% 4%;
 
     /* Popover Components */
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 16%;
+    --popover-foreground: 224 71% 4%;
 
-    /* Brand Primary - Skoda Green */
-    --primary: 122 39% 49%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 122 39% 44%;
+    /* Brand Primary - Skoda Green Enhanced */
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 142 76% 32%;
+    --primary-light: 142 76% 45%;
 
-    /* Brand Secondary - Professional Gray */
-    --secondary: 215 16% 95%;
-    --secondary-foreground: 215 25% 16%;
+    /* Brand Secondary - Professional Gray Enhanced */
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 224 71% 4%;
 
-    /* Muted Elements */
-    --muted: 215 16% 95%;
-    --muted-foreground: 215 13% 54%;
+    /* Muted Elements - Enhanced */
+    --muted: 210 40% 98%;
+    --muted-foreground: 215 16% 47%;
 
-    /* Accent Colors */
-    --accent: 215 16% 95%;
-    --accent-foreground: 215 25% 16%;
+    /* Accent Colors - Enhanced */
+    --accent: 210 40% 98%;
+    --accent-foreground: 224 71% 4%;
 
-    /* Status Colors */
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 122 39% 49%;
-    --success-foreground: 0 0% 100%;
+    /* Status Colors - Enhanced */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    --info: 207 90% 54%;
-    --info-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 98%;
+    --info: 221 83% 53%;
+    --info-foreground: 0 0% 98%;
 
-    /* Form Elements */
-    --border: 215 16% 89%;
-    --input: 215 16% 89%;
-    --ring: 122 39% 49%;
+    /* Form Elements - Enhanced */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 142 76% 36%;
 
     /* Brand Specific Colors */
-    --skoda-green: 122 39% 49%;
-    --vw-blue: 207 90% 54%;
-    --audi-red: 0 72% 51%;
+    --skoda-green: 142 76% 36%;
+    --vw-blue: 221 83% 53%;
+    --audi-red: 0 84% 60%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(122 39% 49%) 0%, hsl(122 39% 44%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(215 16% 98%) 0%, hsl(215 16% 95%) 100%);
-    --gradient-hero: linear-gradient(135deg, rgba(28, 125, 74, 0.9), rgba(28, 125, 74, 0.7)), url('../assets/skoda-cars-bg.jpg');
-    --gradient-hero-fallback: linear-gradient(135deg, hsl(122 39% 49%) 0%, hsl(122 50% 35%) 50%, hsl(215 25% 16%) 100%);
+    /* Enhanced Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(142 76% 32%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(210 40% 98%) 0%, hsl(210 40% 95%) 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(34, 139, 34, 0.95), rgba(34, 139, 34, 0.8)), url('../assets/skoda-cars-bg.jpg');
+    --gradient-hero-fallback: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(142 76% 25%) 50%, hsl(224 71% 4%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 99%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(142 76% 36% / 0.1) 0%, hsl(142 76% 36% / 0.05) 100%);
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(215 25% 16% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(215 25% 16% / 0.1), 0 2px 4px -1px hsl(215 25% 16% / 0.06);
-    --shadow-lg: 0 10px 15px -3px hsl(215 25% 16% / 0.1), 0 4px 6px -2px hsl(215 25% 16% / 0.05);
-    --shadow-xl: 0 20px 25px -5px hsl(215 25% 16% / 0.1), 0 10px 10px -5px hsl(215 25% 16% / 0.04);
+    /* Enhanced Shadows with colors */
+    --shadow-sm: 0 1px 2px 0 hsl(224 71% 4% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(224 71% 4% / 0.1), 0 2px 4px -1px hsl(224 71% 4% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(224 71% 4% / 0.1), 0 4px 6px -2px hsl(224 71% 4% / 0.05);
+    --shadow-xl: 0 20px 25px -5px hsl(224 71% 4% / 0.1), 0 10px 10px -5px hsl(224 71% 4% / 0.04);
+    --shadow-colored: 0 10px 25px -5px hsl(142 76% 36% / 0.2);
 
-    /* Animations */
+    /* Enhanced Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    /* Sidebar Enhanced */
+    --sidebar-background: 224 71% 4%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 142 76% 36%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 224 71% 8%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 224 71% 12%;
+    --sidebar-ring: 142 76% 36%;
   }
 
   .dark {
-    /* Dark Mode - Professional Automotive Theme */
-    --background: 215 28% 9%;
-    --foreground: 215 16% 95%;
+    /* Dark Mode - Enhanced Professional Automotive Theme */
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
 
-    --card: 215 28% 12%;
-    --card-foreground: 215 16% 95%;
+    --card: 224 71% 6%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 215 28% 12%;
-    --popover-foreground: 215 16% 95%;
+    --popover: 224 71% 6%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 122 39% 49%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 122 39% 54%;
+    --primary: 142 76% 45%;
+    --primary-foreground: 224 71% 4%;
+    --primary-hover: 142 76% 50%;
 
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 215 16% 95%;
+    --secondary: 224 71% 10%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 215 28% 17%;
+    --muted: 224 71% 10%;
     --muted-foreground: 215 16% 65%;
 
-    --accent: 215 28% 17%;
-    --accent-foreground: 215 16% 95%;
+    --accent: 224 71% 10%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 122 39% 49%;
-    --success-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --success: 142 76% 45%;
+    --success-foreground: 224 71% 4%;
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    --info: 207 90% 54%;
-    --info-foreground: 0 0% 100%;
+    --warning-foreground: 224 71% 4%;
+    --info: 221 83% 53%;
+    --info-foreground: 224 71% 4%;
 
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 122 39% 49%;
+    --border: 224 71% 12%;
+    --input: 224 71% 12%;
+    --ring: 142 76% 45%;
 
-    /* Gradients for dark mode */
-    --gradient-primary: linear-gradient(135deg, hsl(122 39% 49%) 0%, hsl(122 39% 54%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(215 28% 12%) 0%, hsl(215 28% 17%) 100%);
-    --gradient-hero: linear-gradient(135deg, rgba(28, 125, 74, 0.9), rgba(28, 125, 74, 0.7)), url('../assets/skoda-cars-bg.jpg');
-    --gradient-hero-fallback: linear-gradient(135deg, hsl(122 39% 49%) 0%, hsl(122 50% 35%) 50%, hsl(215 28% 9%) 100%);
+    /* Enhanced dark gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 45%) 0%, hsl(142 76% 50%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(224 71% 6%) 0%, hsl(224 71% 10%) 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(34, 139, 34, 0.9), rgba(34, 139, 34, 0.7)), url('../assets/skoda-cars-bg.jpg');
+    --gradient-card: linear-gradient(135deg, hsl(224 71% 6%) 0%, hsl(224 71% 8%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(142 76% 45% / 0.15) 0%, hsl(142 76% 45% / 0.08) 100%);
 
-    /* Sidebar specific dark colors */
-    --sidebar-background: 215 28% 9%;
-    --sidebar-foreground: 215 16% 95%;
-    --sidebar-primary: 122 39% 49%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 28% 17%;
-    --sidebar-accent-foreground: 215 16% 95%;
-    --sidebar-border: 215 28% 17%;
-    --sidebar-ring: 122 39% 49%;
+    /* Sidebar dark enhanced */
+    --sidebar-background: 224 71% 3%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 142 76% 45%;
+    --sidebar-primary-foreground: 224 71% 4%;
+    --sidebar-accent: 224 71% 8%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 224 71% 10%;
+    --sidebar-ring: 142 76% 45%;
   }
 }
 
@@ -154,52 +155,116 @@ All colors MUST be HSL. Brand-specific color palette for automotive industry.
 
   body {
     @apply bg-background text-foreground font-inter antialiased;
+    background-image: radial-gradient(circle at 1px 1px, hsl(var(--muted)) 1px, transparent 0);
+    background-size: 20px 20px;
   }
 
-  /* Custom scrollbar styling */
+  /* Enhanced scrollbar styling */
   ::-webkit-scrollbar {
     width: 8px;
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-muted;
+    @apply bg-muted rounded-full;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30 rounded-full;
+    @apply bg-gradient-to-b from-primary/30 to-primary/60 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+    @apply from-primary/50 to-primary/80;
+  }
+
+  /* Selection styling */
+  ::selection {
+    @apply bg-primary/20 text-primary-foreground;
   }
 }
 
 @layer components {
-  /* Brand-specific button variants */
+  /* Enhanced brand-specific button variants */
   .btn-skoda {
-    @apply bg-[hsl(var(--skoda-green))] text-white hover:bg-[hsl(var(--skoda-green))]/90 transition-all duration-200;
+    @apply bg-gradient-to-r from-skoda to-skoda/90 text-white hover:from-skoda/90 hover:to-skoda/80 shadow-lg hover:shadow-colored transition-all duration-300 transform hover:scale-105;
   }
   
   .btn-vw {
-    @apply bg-[hsl(var(--vw-blue))] text-white hover:bg-[hsl(var(--vw-blue))]/90 transition-all duration-200;
+    @apply bg-gradient-to-r from-vw to-vw/90 text-white hover:from-vw/90 hover:to-vw/80 shadow-lg transition-all duration-300 transform hover:scale-105;
   }
   
   .btn-audi {
-    @apply bg-[hsl(var(--audi-red))] text-white hover:bg-[hsl(var(--audi-red))]/90 transition-all duration-200;
+    @apply bg-gradient-to-r from-audi to-audi/90 text-white hover:from-audi/90 hover:to-audi/80 shadow-lg transition-all duration-300 transform hover:scale-105;
   }
 
-  /* Professional card styling */
+  /* Enhanced professional card styling */
   .card-elevated {
-    @apply bg-card border border-border rounded-xl shadow-md hover:shadow-lg transition-all duration-300;
+    @apply bg-gradient-card border border-border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
   }
 
-  /* Navigation animations */
+  .card-interactive {
+    @apply card-elevated cursor-pointer hover:border-primary/30 hover:bg-gradient-accent;
+  }
+
+  /* Enhanced navigation animations */
   .nav-item {
-    @apply transition-all duration-200 hover:bg-accent hover:text-accent-foreground rounded-lg;
+    @apply transition-all duration-200 hover:bg-accent hover:text-accent-foreground rounded-lg relative overflow-hidden;
   }
 
-  /* Professional form styling */
+  .nav-item::before {
+    @apply content-[''] absolute inset-0 bg-gradient-to-r from-primary/0 to-primary/10 transform translate-x-[-100%] transition-transform duration-300;
+  }
+
+  .nav-item:hover::before {
+    @apply translate-x-0;
+  }
+
+  /* Enhanced professional form styling */
   .form-section {
-    @apply space-y-4 p-6 bg-card border border-border rounded-xl;
+    @apply space-y-6 p-8 bg-gradient-card border border-border rounded-xl shadow-md;
+  }
+
+  /* Status indicators */
+  .status-active {
+    @apply bg-gradient-to-r from-success/10 to-success/5 text-success border border-success/20 rounded-full px-3 py-1 text-sm font-medium;
+  }
+
+  .status-pending {
+    @apply bg-gradient-to-r from-warning/10 to-warning/5 text-warning border border-warning/20 rounded-full px-3 py-1 text-sm font-medium;
+  }
+
+  .status-inactive {
+    @apply bg-gradient-to-r from-destructive/10 to-destructive/5 text-destructive border border-destructive/20 rounded-full px-3 py-1 text-sm font-medium;
+  }
+
+  /* Enhanced hover effects */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  /* Loading states */
+  .loading-shimmer {
+    @apply bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%] animate-pulse;
+  }
+
+  /* Focus states */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Typography enhancements */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
+  }
+
+  .heading-section {
+    @apply text-3xl font-bold tracking-tight text-gradient mb-2;
+  }
+
+  .description-section {
+    @apply text-muted-foreground text-lg;
   }
 }
