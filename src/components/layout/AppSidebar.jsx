@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import {
   BarChart3,
   Car,
@@ -102,13 +102,10 @@ export function AppSidebar() {
                       isActive={isActive(item.url)}
                       className="nav-item"
                     >
-                      <a href={item.url} className="flex items-center space-x-3 p-3" onClick={(e) => {
-                        e.preventDefault();
-                        window.location.href = item.url;
-                      }}>
+                      <Link to={item.url} className="flex items-center space-x-3 p-3">
                         <item.icon className="h-5 w-5 flex-shrink-0" />
                         {state === "expanded" && <span className="font-medium">{item.title}</span>}
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
