@@ -1,18 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-export interface DamageReport {
-  id: string;
-  bookingId: string;
-  trainerId: string;
-  trainerName: string;
-  vehicleId: string;
-  condition: 'Good' | 'Minor Issues' | 'Damage';
-  description: string;
-  reportedAt: string;
-  resolved: boolean;
-}
-
 export interface Booking {
   id: string;
   vehicleId: string;
@@ -104,7 +92,6 @@ const mockBookings: Booking[] = [
 
 export function useBookings() {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [damageReports, setDamageReports] = useState<DamageReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -206,70 +193,13 @@ export function useBookings() {
     fetchBookings();
   }, []);
 
-  const createDamageReport = async (reportData: {
-    bookingId: string;
-    trainerId: string;
-    trainerName: string;
-    vehicleId: string;
-    condition: 'Good' | 'Minor Issues' | 'Damage';
-    description: string;
-  }) => {
-    try {
-      const newReport: DamageReport = {
-        ...reportData,
-        id: `damage_${Date.now()}`,
-        reportedAt: new Date().toISOString(),
-        resolved: false,
-      };
-
-      setDamageReports(prev => [...prev, newReport]);
-      toast({
-        title: "Success",
-        description: "Damage report submitted successfully",
-      });
-
-      return newReport;
-    } catch (err) {
-      console.error('Error creating damage report:', err);
-      toast({
-        title: "Error",
-        description: "Failed to submit damage report",
-        variant: "destructive"
-      });
-      throw err;
-    }
-  };
-
-  const resolveDamageReport = async (reportId: string) => {
-    try {
-      setDamageReports(prev => prev.map(report => 
-        report.id === reportId ? { ...report, resolved: true } : report
-      ));
-      toast({
-        title: "Success",
-        description: "Damage report marked as resolved",
-      });
-    } catch (err) {
-      console.error('Error resolving damage report:', err);
-      toast({
-        title: "Error",
-        description: "Failed to resolve damage report",
-        variant: "destructive"
-      });
-      throw err;
-    }
-  };
-
   return {
     bookings,
-    damageReports,
     loading,
     error,
     fetchBookings,
     createBooking,
     updateBookingStatus,
     deleteBooking,
-    createDamageReport,
-    resolveDamageReport,
   };
 }
