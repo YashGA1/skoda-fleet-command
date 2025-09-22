@@ -1,0 +1,80 @@
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { LoginPage } from "@/components/auth/LoginPage";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { AdminDashboard } from "@/pages/admin/AdminDashboard";
+import { VehicleManagement } from "@/pages/admin/VehicleManagement";
+import { Analytics } from "@/pages/admin/Analytics";
+import { Users } from "@/pages/admin/Users";
+import { Bookings } from "@/pages/admin/Bookings";
+import ServiceRecords from "@/pages/admin/ServiceRecords";
+import { Reports } from "@/pages/admin/Reports";
+import { TrainerDashboard } from "@/pages/trainer/TrainerDashboard";
+import { SecurityDashboard } from "@/pages/security/SecurityDashboard";
+import { IssueKeys } from "@/pages/security/IssueKeys";
+import { VehicleReturns } from "@/pages/security/VehicleReturns";
+import { BookVehicle } from "@/pages/trainer/BookVehicle";
+import { MyBookings } from "@/pages/trainer/MyBookings";
+import NotFound from "./pages/NotFound";
+
+const queryClient = new QueryClient();
+
+function AppRoutes() {
+  const { isAuthenticated, user } = useAuth();
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  return (
+    <AppLayout>
+      <Routes>
+        {/* Redirect root to role-specific dashboard */}
+        <Route path="/" element={<Navigate to={`/${user?.role}`} replace />} />
+        
+        {/* Admin Routes */}
+        <Route path="/admin" element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/admin/vehicles" element={user?.role === 'admin' ? <VehicleManagement /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/admin/analytics" element={user?.role === 'admin' ? <Analytics /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/admin/users" element={user?.role === 'admin' ? <Users /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/admin/bookings" element={user?.role === 'admin' ? <Bookings /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/admin/service-records" element={user?.role === 'admin' ? <ServiceRecords /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/admin/reports" element={user?.role === 'admin' ? <Reports /> : <Navigate to={`/${user?.role}`} />} />
+        
+        {/* Trainer Routes */}
+        <Route path="/trainer" element={user?.role === 'trainer' ? <TrainerDashboard /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/trainer/book-vehicle" element={user?.role === 'trainer' ? <BookVehicle /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/trainer/my-bookings" element={user?.role === 'trainer' ? <MyBookings /> : <Navigate to={`/${user?.role}`} />} />
+        
+        {/* Security Routes */}
+        <Route path="/security" element={user?.role === 'security' ? <SecurityDashboard /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/security/issue-keys" element={user?.role === 'security' ? <IssueKeys /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/security/keys" element={user?.role === 'security' ? <IssueKeys /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/security/returns" element={user?.role === 'security' ? <VehicleReturns /> : <Navigate to={`/${user?.role}`} />} />
+        
+        {/* Catch-all */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AppLayout>
+  );
+}
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
+
+export default App;
