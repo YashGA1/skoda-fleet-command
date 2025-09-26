@@ -13,7 +13,7 @@ import { useBookings } from '@/hooks/useBookings';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
-type BookingStep = 'brand' | 'vehicle' | 'details' | 'confirmation';
+type BookingStep = 'location' | 'vehicle' | 'details' | 'confirmation';
 
 export function BookVehicle() {
   const navigate = useNavigate();
@@ -22,8 +22,8 @@ export function BookVehicle() {
   const { createBooking } = useBookings();
   const { toast } = useToast();
 
-  const [currentStep, setCurrentStep] = useState<BookingStep>('brand');
-  const [selectedBrand, setSelectedBrand] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState<BookingStep>('location');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedVehicle, setSelectedVehicle] = useState<string>('');
   const [bookingForm, setBookingForm] = useState({
     startDate: '',
@@ -33,17 +33,17 @@ export function BookVehicle() {
     notes: ''
   });
 
-  const uniqueBrands = [...new Set(vehicles.map(v => v.brand))];
+  const uniqueLocations = [...new Set(vehicles.map(v => v.location))];
   
   const availableVehicles = vehicles.filter(vehicle => 
     vehicle.status === 'Active' && 
-    vehicle.brand === selectedBrand
+    vehicle.location === selectedLocation
   );
 
   const selectedVehicleData = vehicles.find(v => v.id === selectedVehicle);
 
-  const handleBrandSelect = (brand: string) => {
-    setSelectedBrand(brand);
+  const handleLocationSelect = (location: string) => {
+    setSelectedLocation(location);
     setSelectedVehicle('');
     setCurrentStep('vehicle');
   };
@@ -88,28 +88,28 @@ export function BookVehicle() {
 
   const renderStepContent = () => {
     switch (currentStep) {
-      case 'brand':
+      case 'location':
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Choose Brand</h2>
-              <p className="text-muted-foreground">Select a vehicle brand for your training</p>
+              <h2 className="text-2xl font-bold mb-2">Choose Location</h2>
+              <p className="text-muted-foreground">Select the training academy location</p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {uniqueBrands.map((brand) => (
+              {uniqueLocations.map((location) => (
                 <Card 
-                  key={brand}
+                  key={location}
                   className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105"
-                  onClick={() => handleBrandSelect(brand)}
+                  onClick={() => handleLocationSelect(location)}
                 >
                   <CardContent className="p-6 text-center">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Car className="h-8 w-8 text-primary" />
+                      <MapPin className="h-8 w-8 text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">{brand}</h3>
+                    <h3 className="text-lg font-semibold mb-2">{location}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {vehicles.filter(v => v.brand === brand && v.status === 'Active').length} vehicles available
+                      {vehicles.filter(v => v.location === location && v.status === 'Active').length} vehicles available
                     </p>
                   </CardContent>
                 </Card>
@@ -122,12 +122,12 @@ export function BookVehicle() {
         return (
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => setCurrentStep('brand')}>
+              <Button variant="ghost" onClick={() => setCurrentStep('location')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Brands
+                Back to Locations
               </Button>
               <div>
-                <h2 className="text-2xl font-bold">Available {selectedBrand} Vehicles</h2>
+                <h2 className="text-2xl font-bold">Available Vehicles - {selectedLocation}</h2>
                 <p className="text-muted-foreground">Choose a vehicle for your training session</p>
               </div>
             </div>
@@ -177,7 +177,7 @@ export function BookVehicle() {
             {!vehiclesLoading && availableVehicles.length === 0 && (
               <div className="text-center py-8">
                 <Car className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">No {selectedBrand} vehicles available currently.</p>
+                <p className="text-muted-foreground">No vehicles available at {selectedLocation} currently.</p>
               </div>
             )}
           </div>
@@ -221,10 +221,10 @@ export function BookVehicle() {
                           <span className="text-muted-foreground">Registration:</span>
                           <p className="font-medium">{selectedVehicleData.regNo}</p>
                         </div>
-                         <div>
-                           <span className="text-muted-foreground">Brand:</span>
-                           <p className="font-medium">{selectedVehicleData.brand}</p>
-                         </div>
+                        <div>
+                          <span className="text-muted-foreground">Location:</span>
+                          <p className="font-medium">{selectedVehicleData.location}</p>
+                        </div>
                         <div>
                           <span className="text-muted-foreground">Fuel Type:</span>
                           <p className="font-medium">{selectedVehicleData.fuelType}</p>
@@ -341,8 +341,8 @@ export function BookVehicle() {
                 <Button 
                   variant="outline" 
                   onClick={() => {
-                    setCurrentStep('brand');
-                    setSelectedBrand('');
+                    setCurrentStep('location');
+                    setSelectedLocation('');
                     setSelectedVehicle('');
                     setBookingForm({
                       startDate: '',
@@ -370,12 +370,12 @@ export function BookVehicle() {
     <div className="space-y-6 animate-fade-in">
       {/* Progress Indicator */}
       <div className="flex items-center justify-center space-x-2 mb-8">
-        {['brand', 'vehicle', 'details', 'confirmation'].map((step, index) => (
+        {['location', 'vehicle', 'details', 'confirmation'].map((step, index) => (
           <div key={step} className="flex items-center">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
               currentStep === step 
                 ? 'bg-primary text-primary-foreground' 
-                : index < ['brand', 'vehicle', 'details', 'confirmation'].indexOf(currentStep)
+                : index < ['location', 'vehicle', 'details', 'confirmation'].indexOf(currentStep)
                   ? 'bg-success text-success-foreground'
                   : 'bg-muted text-muted-foreground'
             }`}>
@@ -383,7 +383,7 @@ export function BookVehicle() {
             </div>
             {index < 3 && (
               <div className={`w-12 h-0.5 mx-2 ${
-                index < ['brand', 'vehicle', 'details', 'confirmation'].indexOf(currentStep)
+                index < ['location', 'vehicle', 'details', 'confirmation'].indexOf(currentStep)
                   ? 'bg-success'
                   : 'bg-muted'
               }`} />

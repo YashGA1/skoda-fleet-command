@@ -48,6 +48,7 @@ const navigationItems: Record<UserRole, Array<{
     { title: 'Dashboard', url: '/trainer', icon: Home, group: 'Overview' },
     { title: 'Book Vehicle', url: '/trainer/book-vehicle', icon: Car, group: 'Booking' },
     { title: 'My Bookings', url: '/trainer/my-bookings', icon: Calendar, group: 'Booking' },
+    { title: 'Return Vehicle', url: '/trainer/return-vehicle', icon: ArrowLeftRight, group: 'Booking' },
   ],
   security: [
     { title: 'Dashboard', url: '/security', icon: Home, group: 'Overview' },

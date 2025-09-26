@@ -19,6 +19,7 @@ import { IssueKeys } from "@/pages/security/IssueKeys";
 import { VehicleReturns } from "@/pages/security/VehicleReturns";
 import { BookVehicle } from "@/pages/trainer/BookVehicle";
 import { MyBookings } from "@/pages/trainer/MyBookings";
+import { VehicleReturn } from "@/pages/trainer/VehicleReturn";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ function AppRoutes() {
         <Route path="/trainer" element={user?.role === 'trainer' ? <TrainerDashboard /> : <Navigate to={`/${user?.role}`} />} />
         <Route path="/trainer/book-vehicle" element={user?.role === 'trainer' ? <BookVehicle /> : <Navigate to={`/${user?.role}`} />} />
         <Route path="/trainer/my-bookings" element={user?.role === 'trainer' ? <MyBookings /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/trainer/return-vehicle" element={user?.role === 'trainer' ? <VehicleReturn /> : <Navigate to={`/${user?.role}`} />} />
         
         {/* Security Routes */}
         <Route path="/security" element={user?.role === 'security' ? <SecurityDashboard /> : <Navigate to={`/${user?.role}`} />} />
