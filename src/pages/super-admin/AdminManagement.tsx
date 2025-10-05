@@ -32,12 +32,28 @@ const mockAdmins: Admin[] = [
     joinDate: '2023-01-15'
   },
   {
-    id: '4',
+    id: '2',
     name: 'Priya Admin',
     email: 'admin.vgtap@skoda.com',
     location: 'VGTAP',
     status: 'active',
     joinDate: '2023-02-20'
+  },
+  {
+    id: '3',
+    name: 'Rajesh Kumar',
+    email: 'admin.ncr@skoda.com',
+    location: 'NCR',
+    status: 'active',
+    joinDate: '2023-03-10'
+  },
+  {
+    id: '4',
+    name: 'Ananya Sharma',
+    email: 'admin.blr@skoda.com',
+    location: 'BLR',
+    status: 'active',
+    joinDate: '2023-04-05'
   }
 ];
 

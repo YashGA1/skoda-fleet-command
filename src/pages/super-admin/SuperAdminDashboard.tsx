@@ -10,7 +10,7 @@ export function SuperAdminDashboard() {
   // Mock statistics
   const stats = {
     totalLocations: 4,
-    totalAdmins: 8,
+    totalAdmins: 4,
     totalUsers: 142,
     totalVehicles: 76,
     activeBookings: 32,
