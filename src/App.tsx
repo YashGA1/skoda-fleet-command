@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { LoginPage } from "@/components/auth/LoginPage";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { SuperAdminDashboard } from "@/pages/super-admin/SuperAdminDashboard";
+import { AdminManagement } from "@/pages/super-admin/AdminManagement";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { VehicleManagement } from "@/pages/admin/VehicleManagement";
 import { Analytics } from "@/pages/admin/Analytics";
@@ -35,7 +37,16 @@ function AppRoutes() {
     <AppLayout>
       <Routes>
         {/* Redirect root to role-specific dashboard */}
-        <Route path="/" element={<Navigate to={`/${user?.role}`} replace />} />
+        <Route path="/" element={<Navigate to={`/${user?.role === 'super_admin' ? 'super-admin' : user?.role}`} replace />} />
+        
+        {/* Super Admin Routes */}
+        <Route path="/super-admin" element={user?.role === 'super_admin' ? <SuperAdminDashboard /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/admins" element={user?.role === 'super_admin' ? <AdminManagement /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/locations" element={user?.role === 'super_admin' ? <AdminManagement /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/users" element={user?.role === 'super_admin' ? <Users /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/vehicles" element={user?.role === 'super_admin' ? <VehicleManagement /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/reports" element={user?.role === 'super_admin' ? <Reports /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/analytics" element={user?.role === 'super_admin' ? <Analytics /> : <Navigate to={`/${user?.role}`} />} />
         
         {/* Admin Routes */}
         <Route path="/admin" element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to={`/${user?.role}`} />} />

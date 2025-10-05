@@ -9,7 +9,18 @@ import { Car, Shield, GraduationCap, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 
-const roleConfig = {
+const roleConfig: Record<UserRole, {
+  icon: any;
+  title: string;
+  description: string;
+  defaultEmail: string;
+}> = {
+  super_admin: {
+    icon: Shield,
+    title: 'Super Administrator',
+    description: 'Full system control and location management',
+    defaultEmail: 'superadmin@skoda.com'
+  },
   admin: {
     icon: Settings,
     title: 'Administrator',
@@ -88,7 +99,8 @@ export function LoginPage() {
 
             {/* Role Selection */}
             <Tabs value={selectedRole} onValueChange={handleRoleChange as (value: string) => void}>
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+                <TabsTrigger value="super_admin" className="text-xs">Super Admin</TabsTrigger>
                 <TabsTrigger value="admin" className="text-xs">Admin</TabsTrigger>
                 <TabsTrigger value="trainer" className="text-xs">Trainer</TabsTrigger>
                 <TabsTrigger value="security" className="text-xs">Security</TabsTrigger>

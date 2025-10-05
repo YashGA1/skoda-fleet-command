@@ -10,19 +10,39 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Mock users for demonstration
 const mockUsers: Record<string, User> = {
+  'superadmin@skoda.com': {
+    id: '0',
+    name: 'Super Administrator',
+    email: 'superadmin@skoda.com',
+    role: 'super_admin',
+    location: 'ALL',
+    department: 'System Administration',
+    employeeId: 'EMP000'
+  },
   'admin@skoda.com': {
     id: '1',
     name: 'John Administrator',
     email: 'admin@skoda.com',
     role: 'admin',
+    location: 'PTC',
     department: 'Fleet Management',
     employeeId: 'EMP001'
+  },
+  'admin.vgtap@skoda.com': {
+    id: '4',
+    name: 'Priya Admin',
+    email: 'admin.vgtap@skoda.com',
+    role: 'admin',
+    location: 'VGTAP',
+    department: 'Fleet Management',
+    employeeId: 'EMP004'
   },
   'trainer@skoda.com': {
     id: '2',
     name: 'Sarah Trainer',
     email: 'trainer@skoda.com',
     role: 'trainer',
+    location: 'PTC',
     department: 'Training Center',
     employeeId: 'EMP002'
   },
@@ -31,6 +51,7 @@ const mockUsers: Record<string, User> = {
     name: 'Mike Security',
     email: 'security@skoda.com',
     role: 'security',
+    location: 'PTC',
     department: 'Security',
     employeeId: 'EMP003'
   }
