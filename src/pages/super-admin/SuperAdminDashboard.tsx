@@ -1,34 +1,93 @@
-import { StatCard } from '@/components/dashboard/StatCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Shield, Car, MapPin, Activity, AlertCircle } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { getLocationName } from '@/constants/locations';
+import { StatCard } from '@/components/dashboard/StatCard';
+import { Users, Car, MapPin, Shield, Edit } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { LOCATIONS, getLocationName } from '@/constants/locations';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+const mockAdmins = [
+  {
+    id: '1',
+    name: 'John Administrator',
+    email: 'admin@skoda.com',
+    location: 'PTC',
+    status: 'active',
+    joinDate: '2023-01-15',
+    vehicles: 18,
+    trainers: 12,
+    bookings: 8
+  },
+  {
+    id: '2',
+    name: 'Priya Admin',
+    email: 'admin.vgtap@skoda.com',
+    location: 'VGTAP',
+    status: 'active',
+    joinDate: '2023-02-20',
+    vehicles: 22,
+    trainers: 15,
+    bookings: 12
+  },
+  {
+    id: '3',
+    name: 'Rajesh Kumar',
+    email: 'admin.ncr@skoda.com',
+    location: 'NCR',
+    status: 'active',
+    joinDate: '2023-03-10',
+    vehicles: 16,
+    trainers: 10,
+    bookings: 6
+  },
+  {
+    id: '4',
+    name: 'Ananya Sharma',
+    email: 'admin.blr@skoda.com',
+    location: 'BLR',
+    status: 'active',
+    joinDate: '2023-04-05',
+    vehicles: 20,
+    trainers: 14,
+    bookings: 9
+  }
+];
 
 export function SuperAdminDashboard() {
-  const { user } = useAuth();
-
+  const navigate = useNavigate();
+  
   // Mock statistics
   const stats = {
     totalLocations: 4,
     totalAdmins: 4,
     totalUsers: 142,
     totalVehicles: 76,
-    activeBookings: 32,
-    pendingIssues: 5
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Super Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          System-wide overview and management
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Location Management</h1>
+          <p className="text-muted-foreground">
+            Manage training centers and administrators
+          </p>
+        </div>
+        <Button onClick={() => navigate('/super-admin/admins')} className="bg-gradient-primary hover:bg-primary-hover">
+          <Shield className="h-4 w-4 mr-2" />
+          Manage Admins
+        </Button>
       </div>
 
-      {/* Overview Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Key Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Training Centers"
           value={stats.totalLocations}
@@ -38,97 +97,122 @@ export function SuperAdminDashboard() {
         <StatCard
           title="Location Admins"
           value={stats.totalAdmins}
-          description="Across all centers"
+          description="Managing centers"
           icon={Shield}
         />
         <StatCard
           title="Total Users"
           value={stats.totalUsers}
-          description="Trainers & Security"
+          description="All system users"
           icon={Users}
         />
         <StatCard
-          title="Fleet Size"
+          title="Total Vehicles"
           value={stats.totalVehicles}
-          description="Total vehicles"
+          description="Fleet-wide"
           icon={Car}
-        />
-        <StatCard
-          title="Active Bookings"
-          value={stats.activeBookings}
-          description="Currently in use"
-          icon={Activity}
-        />
-        <StatCard
-          title="Pending Issues"
-          value={stats.pendingIssues}
-          description="Require attention"
-          icon={AlertCircle}
         />
       </div>
 
-      {/* Location Overview */}
+      {/* Training Centers with Admins */}
       <Card className="card-elevated">
         <CardHeader>
-          <CardTitle>Location Status Overview</CardTitle>
-          <CardDescription>Quick view of all training centers</CardDescription>
+          <CardTitle>Training Centers & Administrators</CardTitle>
+          <CardDescription>
+            Location-wise admin assignments and statistics
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {['PTC', 'VGTAP', 'NCR', 'BLR'].map((locationCode) => (
-              <div key={locationCode} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-4">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <div>
-                    <h3 className="font-semibold">{getLocationName(locationCode as any)}</h3>
-                    <p className="text-sm text-muted-foreground">Location Code: {locationCode}</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-6 text-sm">
-                  <div className="text-center">
-                    <p className="font-semibold">{Math.floor(Math.random() * 25) + 10}</p>
-                    <p className="text-muted-foreground">Vehicles</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="font-semibold">{Math.floor(Math.random() * 15) + 5}</p>
-                    <p className="text-muted-foreground">Trainers</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="font-semibold">{Math.floor(Math.random() * 10) + 3}</p>
-                    <p className="text-muted-foreground">Bookings</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Administrator</TableHead>
+                <TableHead>Training Center</TableHead>
+                <TableHead>Vehicles</TableHead>
+                <TableHead>Trainers</TableHead>
+                <TableHead>Active Bookings</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {mockAdmins.map((admin) => (
+                <TableRow key={admin.id}>
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>{getInitials(admin.name)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{admin.name}</div>
+                        <div className="text-sm text-muted-foreground">{admin.email}</div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span>{getLocationName(admin.location as any)}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>{admin.vehicles}</TableCell>
+                  <TableCell>{admin.trainers}</TableCell>
+                  <TableCell>{admin.bookings}</TableCell>
+                  <TableCell>
+                    <Badge className="bg-success text-success-foreground">Active</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate('/super-admin/admins')}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
-      {/* Recent Activity */}
+      {/* Quick Actions */}
       <Card className="card-elevated">
         <CardHeader>
-          <CardTitle>Recent System Activity</CardTitle>
-          <CardDescription>Latest actions across all locations</CardDescription>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Common administrative tasks</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {[
-              { location: 'PTC', action: 'New admin created', time: '2 hours ago' },
-              { location: 'VGTAP', action: 'Vehicle maintenance completed', time: '4 hours ago' },
-              { location: 'NCR', action: 'New trainer onboarded', time: '6 hours ago' },
-              { location: 'BLR', action: 'Document renewal alert', time: '8 hours ago' },
-            ].map((activity, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border-b last:border-b-0">
-                <div className="flex items-center space-x-3">
-                  <Activity className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">{activity.action}</p>
-                    <p className="text-sm text-muted-foreground">{getLocationName(activity.location as any)}</p>
-                  </div>
-                </div>
-                <span className="text-sm text-muted-foreground">{activity.time}</span>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <Button 
+              variant="outline" 
+              className="justify-start h-auto p-4"
+              onClick={() => navigate('/super-admin/admins')}
+            >
+              <div className="text-left">
+                <p className="font-medium">Manage Admins</p>
+                <p className="text-xs text-muted-foreground">Add or remove location administrators</p>
               </div>
-            ))}
+            </Button>
+            <Button 
+              variant="outline" 
+              className="justify-start h-auto p-4"
+            >
+              <div className="text-left">
+                <p className="font-medium">View All Users</p>
+                <p className="text-xs text-muted-foreground">System-wide user management</p>
+              </div>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="justify-start h-auto p-4"
+            >
+              <div className="text-left">
+                <p className="font-medium">System Reports</p>
+                <p className="text-xs text-muted-foreground">Analytics and insights</p>
+              </div>
+            </Button>
           </div>
         </CardContent>
       </Card>

@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Car, Search, Filter, CheckCircle, Clock, AlertTriangle, Calendar } from 'lucide-react';
+import { Car, Search, Filter, CheckCircle, Clock, AlertTriangle, Calendar, Plus } from 'lucide-react';
 import { useVehicles } from '@/hooks/useVehicles';
 import { StatCard } from '@/components/dashboard/StatCard';
 
@@ -86,6 +86,10 @@ export function VehicleManagement() {
             Manage your VGA training fleet and track compliance
           </p>
         </div>
+        <Button className="bg-gradient-primary hover:bg-primary-hover">
+          <Car className="h-4 w-4 mr-2" />
+          Add Vehicle
+        </Button>
       </div>
 
       {/* Stats Dashboard */}

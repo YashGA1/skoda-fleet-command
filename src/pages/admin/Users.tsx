@@ -9,8 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StatCard } from '@/components/dashboard/StatCard';
-import { Plus, Edit, Trash2, Users as UsersIcon, Search, Filter, UserCheck, UserX, Shield } from 'lucide-react';
+import { Plus, Edit, Trash2, Users as UsersIcon, Search, Filter, UserCheck, UserX, Shield, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
+import { LOCATIONS } from '@/constants/locations';
 
 interface User {
   id: string;
@@ -19,6 +20,7 @@ interface User {
   role: 'admin' | 'trainer' | 'security';
   status: 'active' | 'inactive' | 'suspended';
   department: string;
+  location: string;
   joinDate: string;
   lastLogin: string;
   avatar?: string;
@@ -32,6 +34,7 @@ const mockUsers: User[] = [
     role: 'admin',
     status: 'active',
     department: 'Administration',
+    location: 'PTC',
     joinDate: '2023-01-15',
     lastLogin: '2024-01-15 09:30',
     avatar: undefined
@@ -43,6 +46,7 @@ const mockUsers: User[] = [
     role: 'trainer',
     status: 'active',
     department: 'Training',
+    location: 'PTC',
     joinDate: '2023-03-20',
     lastLogin: '2024-01-15 14:22',
     avatar: undefined
@@ -54,6 +58,7 @@ const mockUsers: User[] = [
     role: 'trainer',
     status: 'active',
     department: 'Training',
+    location: 'VGTAP',
     joinDate: '2023-02-10',
     lastLogin: '2024-01-14 16:45',
     avatar: undefined
@@ -65,6 +70,7 @@ const mockUsers: User[] = [
     role: 'trainer',
     status: 'inactive',
     department: 'Training',
+    location: 'NCR',
     joinDate: '2023-06-01',
     lastLogin: '2024-01-10 11:15',
     avatar: undefined
@@ -76,6 +82,7 @@ const mockUsers: User[] = [
     role: 'security',
     status: 'active',
     department: 'Security',
+    location: 'PTC',
     joinDate: '2023-01-30',
     lastLogin: '2024-01-15 08:00',
     avatar: undefined
@@ -87,6 +94,7 @@ const mockUsers: User[] = [
     role: 'security',
     status: 'active',
     department: 'Security',
+    location: 'BLR',
     joinDate: '2023-04-15',
     lastLogin: '2024-01-15 07:45',
     avatar: undefined
@@ -99,6 +107,7 @@ const initialUserForm: Omit<User, 'id' | 'joinDate' | 'lastLogin'> = {
   role: 'trainer',
   status: 'active',
   department: '',
+  location: 'PTC',
   avatar: undefined
 };
 
@@ -307,15 +316,38 @@ export function Users() {
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Input
-                  id="department"
-                  value={userForm.department}
-                  onChange={(e) => setUserForm(prev => ({ ...prev, department: e.target.value }))}
-                  placeholder="Enter department"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="department">Department</Label>
+                  <Input
+                    id="department"
+                    value={userForm.department}
+                    onChange={(e) => setUserForm(prev => ({ ...prev, department: e.target.value }))}
+                    placeholder="Enter department"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="location">Academy Location</Label>
+                  <Select
+                    value={userForm.location}
+                    onValueChange={(value) => 
+                      setUserForm(prev => ({ ...prev, location: value }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LOCATIONS.map(loc => (
+                        <SelectItem key={loc.code} value={loc.code}>
+                          {loc.fullName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               
               <div className="flex justify-end space-x-2 pt-4">
@@ -425,6 +457,7 @@ export function Users() {
                 <TableRow>
                   <TableHead>User</TableHead>
                   <TableHead>Role</TableHead>
+                  <TableHead>Location</TableHead>
                   <TableHead>Department</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Join Date</TableHead>
@@ -448,6 +481,12 @@ export function Users() {
                       </div>
                     </TableCell>
                     <TableCell>{getRoleBadge(user.role)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-sm">{user.location}</span>
+                      </div>
+                    </TableCell>
                     <TableCell>{user.department}</TableCell>
                     <TableCell>{getStatusBadge(user.status)}</TableCell>
                     <TableCell>{user.joinDate}</TableCell>
