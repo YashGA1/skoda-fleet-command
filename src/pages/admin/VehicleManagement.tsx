@@ -10,7 +10,7 @@ import { useVehicles } from '@/hooks/useVehicles';
 import { StatCard } from '@/components/dashboard/StatCard';
 
 export function VehicleManagement() {
-  const { vehicles, loading } = useVehicles();
+  const { vehicles, loading, updateVehicle } = useVehicles();
   const [searchTerm, setSearchTerm] = useState('');
   const [brandFilter, setBrandFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -201,6 +201,7 @@ export function VehicleManagement() {
                   <TableHead>Insurance</TableHead>
                   <TableHead>PUC</TableHead>
                   <TableHead>Trainer</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -247,6 +248,21 @@ export function VehicleManagement() {
                       <div className="text-sm">
                         {vehicle.allocatedTrainer || 'Unassigned'}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={vehicle.status}
+                        onValueChange={(value: "Active" | "Inactive" | "Maintenance") => updateVehicle(vehicle.id, { status: value })}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Active">Active</SelectItem>
+                          <SelectItem value="Inactive">Inactive</SelectItem>
+                          <SelectItem value="Maintenance">Maintenance</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                   </TableRow>
                 ))}
