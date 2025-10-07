@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 
 interface MessagingContextType {
   messages: Message[];
-  sendMessage: (content: string, recipientIds: string[], recipientRoles?: string[]) => void;
+  sendMessage: (content: string, recipientIds: string[], recipientRoles?: string[], parentMessageId?: string) => void;
   markAsRead: (messageId: string) => void;
   unreadCount: number;
 }
@@ -42,7 +42,7 @@ export function MessagingProvider({ children }: { children: ReactNode }) {
     }
   }, [messages]);
 
-  const sendMessage = (content: string, recipientIds: string[], recipientRoles?: string[]) => {
+  const sendMessage = (content: string, recipientIds: string[], recipientRoles?: string[], parentMessageId?: string) => {
     if (!user) return;
 
     const newMessage: Message = {
@@ -55,6 +55,7 @@ export function MessagingProvider({ children }: { children: ReactNode }) {
       content,
       timestamp: new Date(),
       read: false,
+      parentMessageId,
     };
 
     setMessages(prev => [...prev, newMessage]);

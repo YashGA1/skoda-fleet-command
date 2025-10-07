@@ -8,6 +8,7 @@ export interface Message {
   content: string;
   timestamp: Date;
   read: boolean;
+  parentMessageId?: string; // for replies
 }
 
 export interface MessageThread {
