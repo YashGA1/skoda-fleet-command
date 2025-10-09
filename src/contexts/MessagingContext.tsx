@@ -13,7 +13,7 @@ const MessagingContext = createContext<MessagingContextType | undefined>(undefin
 
 // Mock users for recipient selection
 export const mockUsers = [
-  { id: '0', name: 'Super Administrator', role: 'super_admin' },
+  { id: '0', name: 'Super Administrator', role: 'super_admin', location: 'HQ' },
   { id: '1', name: 'John Administrator', role: 'admin', location: 'PTC' },
   { id: '2', name: 'Priya Admin', role: 'admin', location: 'VGTAP' },
   { id: '3', name: 'Rajesh Kumar', role: 'admin', location: 'NCR' },

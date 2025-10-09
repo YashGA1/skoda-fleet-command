@@ -157,7 +157,7 @@ export function Messages() {
                     <SelectTrigger>
                       <SelectValue placeholder={searchRecipient && filteredRecipients.length === 0 ? "No recipients found" : "Select recipient"} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-[300px]">
                       {filteredRecipients.length === 0 ? (
                         <div className="px-2 py-6 text-center text-sm text-muted-foreground">
                           No recipients found
@@ -166,11 +166,13 @@ export function Messages() {
                         filteredRecipients.map(u => (
                           <SelectItem key={u.id} value={u.id}>
                             <div className="flex items-center gap-2">
+                              {u.location && (
+                                <Badge variant="secondary" className="text-xs font-normal">
+                                  {u.location}
+                                </Badge>
+                              )}
                               <span className="font-medium">{u.name}</span>
                               <span className="text-xs text-muted-foreground">• {u.role}</span>
-                              {(u.role === 'admin' || u.role === 'security') && u.location && (
-                                <Badge variant="outline" className="text-xs ml-1">{u.location}</Badge>
-                              )}
                             </div>
                           </SelectItem>
                         ))
