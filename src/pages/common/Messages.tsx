@@ -148,42 +148,8 @@ export function Messages() {
                       className="pl-9"
                     />
                   </div>
-                  
-                  {searchRecipient ? (
-                    <div className="border rounded-lg max-h-[300px] overflow-y-auto">
-                      {filteredRecipients.length === 0 ? (
-                        <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                          No recipients found
-                        </div>
-                      ) : (
-                        <div className="p-1">
-                          <p className="text-xs text-muted-foreground px-3 py-2">
-                            {filteredRecipients.length} recipient{filteredRecipients.length !== 1 ? 's' : ''} found
-                          </p>
-                          {filteredRecipients.map(u => (
-                            <button
-                              key={u.id}
-                              onClick={() => {
-                                setSelectedRecipient(u.id);
-                                setSearchRecipient('');
-                              }}
-                              className="w-full px-3 py-2 text-left hover:bg-accent rounded-md transition-colors"
-                            >
-                              <div className="flex items-center gap-2">
-                                {u.location && (
-                                  <Badge variant="secondary" className="text-xs font-normal">
-                                    {u.location}
-                                  </Badge>
-                                )}
-                                <span className="font-medium">{u.name}</span>
-                                <span className="text-xs text-muted-foreground">• {u.role}</span>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : selectedRecipient ? (
+
+                  {selectedRecipient ? (
                     <div className="p-3 bg-muted/50 rounded-lg border flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {availableRecipients.find(u => u.id === selectedRecipient)?.location && (
@@ -208,9 +174,64 @@ export function Messages() {
                       </Button>
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground px-1">
-                      Start typing to search for a recipient
-                    </p>
+                    <Select
+                      value={selectedRecipient}
+                      onValueChange={(value) => {
+                        setSelectedRecipient(value);
+                        setSearchRecipient('');
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select recipient" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px]">
+                        {availableRecipients.map(u => (
+                          <SelectItem key={u.id} value={u.id}>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="secondary" className="text-xs font-normal">
+                                {u.location}
+                              </Badge>
+                              <span className="font-medium">{u.name}</span>
+                              <span className="text-xs text-muted-foreground">• {u.role}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  
+                  {searchRecipient && (
+                    <div className="border rounded-lg max-h-[300px] overflow-y-auto bg-background">
+                      {filteredRecipients.length === 0 ? (
+                        <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                          No recipients found
+                        </div>
+                      ) : (
+                        <div className="p-1">
+                          <p className="text-xs text-muted-foreground px-3 py-2">
+                            {filteredRecipients.length} recipient{filteredRecipients.length !== 1 ? 's' : ''} found
+                          </p>
+                          {filteredRecipients.map(u => (
+                            <button
+                              key={u.id}
+                              onClick={() => {
+                                setSelectedRecipient(u.id);
+                                setSearchRecipient('');
+                              }}
+                              className="w-full px-3 py-2 text-left hover:bg-accent rounded-md transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <Badge variant="secondary" className="text-xs font-normal">
+                                  {u.location}
+                                </Badge>
+                                <span className="font-medium">{u.name}</span>
+                                <span className="text-xs text-muted-foreground">• {u.role}</span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
