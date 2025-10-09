@@ -147,23 +147,34 @@ export function Messages() {
                       onChange={(e) => setSearchRecipient(e.target.value)}
                       className="pl-9"
                     />
+                    {searchRecipient && (
+                      <p className="text-xs text-muted-foreground mt-1 ml-1">
+                        {filteredRecipients.length} recipient{filteredRecipients.length !== 1 ? 's' : ''} found
+                      </p>
+                    )}
                   </div>
                   <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select recipient" />
+                      <SelectValue placeholder={searchRecipient && filteredRecipients.length === 0 ? "No recipients found" : "Select recipient"} />
                     </SelectTrigger>
                     <SelectContent>
-                      {filteredRecipients.map(u => (
-                        <SelectItem key={u.id} value={u.id}>
-                          <div className="flex items-center gap-2">
-                            <span>{u.name}</span>
-                            <span className="text-muted-foreground">({u.role})</span>
-                            {(u.role === 'admin' || u.role === 'security') && u.location && (
-                              <Badge variant="outline" className="text-xs">{u.location}</Badge>
-                            )}
-                          </div>
-                        </SelectItem>
-                      ))}
+                      {filteredRecipients.length === 0 ? (
+                        <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                          No recipients found
+                        </div>
+                      ) : (
+                        filteredRecipients.map(u => (
+                          <SelectItem key={u.id} value={u.id}>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{u.name}</span>
+                              <span className="text-xs text-muted-foreground">• {u.role}</span>
+                              {(u.role === 'admin' || u.role === 'security') && u.location && (
+                                <Badge variant="outline" className="text-xs ml-1">{u.location}</Badge>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
