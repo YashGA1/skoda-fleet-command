@@ -8,6 +8,7 @@ import { MessageSquarePlus } from 'lucide-react';
 import { ConversationList } from '@/components/messaging/ConversationList';
 import { ChatInterface } from '@/components/messaging/ChatInterface';
 import { NewConversation } from '@/components/messaging/NewConversation';
+import { BroadcastInterface } from '@/components/messaging/BroadcastInterface';
 
 export function Messages() {
   const { user } = useAuth();
@@ -32,9 +33,9 @@ export function Messages() {
         <p className="text-muted-foreground">Direct messaging with team members</p>
       </div>
 
-      <Card className="h-[calc(100%-5rem)]">
+      <Card className="h-[calc(100%-5rem)] overflow-hidden">
         <CardContent className="p-0 h-full">
-          <div className="grid md:grid-cols-[350px_1fr] h-full">
+          <div className="grid md:grid-cols-[380px_1fr] h-full">
             {/* Left Panel - Conversation List */}
             <div className={`border-r ${view === 'chat' ? 'hidden md:block' : 'block'}`}>
               <div className="p-4 border-b flex items-center justify-between">
@@ -70,10 +71,8 @@ export function Messages() {
                   )}
                 </TabsContent>
                 
-                <TabsContent value="broadcast" className="m-0 p-4">
-                  <p className="text-sm text-muted-foreground text-center py-8">
-                    Broadcast messaging coming soon
-                  </p>
+                <TabsContent value="broadcast" className="m-0 h-[calc(100%-2.5rem)]">
+                  <BroadcastInterface />
                 </TabsContent>
               </Tabs>
             </div>
