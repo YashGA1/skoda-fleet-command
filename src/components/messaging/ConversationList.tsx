@@ -1,8 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { mockUsers } from '@/contexts/MessagingContext';
 import { Message } from '@/types/message';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface ConversationListProps {
@@ -13,6 +15,8 @@ interface ConversationListProps {
 }
 
 export function ConversationList({ userId, messages, selectedUserId, onSelectUser }: ConversationListProps) {
+  const [search, setSearch] = useState('');
+
   const conversations = useMemo(() => {
     const conversationMap = new Map<string, { user: typeof mockUsers[0]; lastMessage: Message; unreadCount: number }>();
 
@@ -44,14 +48,34 @@ export function ConversationList({ userId, messages, selectedUserId, onSelectUse
     );
   }, [messages, userId]);
 
+  const filteredConversations = useMemo(() => {
+    if (!search.trim()) return conversations;
+    return conversations.filter(({ user }) =>
+      user.name.toLowerCase().includes(search.toLowerCase()) ||
+      user.role.toLowerCase().includes(search.toLowerCase()) ||
+      (user.location && user.location.toLowerCase().includes(search.toLowerCase()))
+    );
+  }, [conversations, search]);
+
   return (
-    <div className="space-y-1">
-      {conversations.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground text-sm">
-          No conversations yet
-        </div>
-      ) : (
-        conversations.map(({ user, lastMessage, unreadCount }) => (
+    <div className="space-y-3">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search conversations..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
+      <div className="space-y-1">
+        {filteredConversations.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground text-sm">
+            {search ? 'No conversations found' : 'No conversations yet'}
+          </div>
+        ) : (
+          filteredConversations.map(({ user, lastMessage, unreadCount }) => (
           <button
             key={user.id}
             onClick={() => onSelectUser(user.id)}
@@ -90,6 +114,7 @@ export function ConversationList({ userId, messages, selectedUserId, onSelectUse
           </button>
         ))
       )}
+      </div>
     </div>
   );
 }

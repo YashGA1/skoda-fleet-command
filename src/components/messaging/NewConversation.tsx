@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { mockUsers } from '@/contexts/MessagingContext';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Search } from 'lucide-react';
@@ -8,9 +9,10 @@ import { Search } from 'lucide-react';
 interface NewConversationProps {
   userId: string;
   onSelectUser: (userId: string) => void;
+  onBack: () => void;
 }
 
-export function NewConversation({ userId, onSelectUser }: NewConversationProps) {
+export function NewConversation({ userId, onSelectUser, onBack }: NewConversationProps) {
   const [search, setSearch] = useState('');
 
   const availableUsers = mockUsers.filter(u => u.id !== userId);
@@ -26,14 +28,25 @@ export function NewConversation({ userId, onSelectUser }: NewConversationProps) 
 
   return (
     <div className="space-y-4">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search by name, role, or location..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
-        />
+      <div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={onBack}
+          className="mb-3 -ml-2"
+        >
+          ← Back to conversations
+        </Button>
+        
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name, role, or location..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
       </div>
 
       <div className="space-y-1">
