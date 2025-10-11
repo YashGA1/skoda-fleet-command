@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { getLocationName } from '@/constants/locations';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { 
@@ -15,11 +13,11 @@ import {
   Calendar, 
   Users, 
   Car,
-  Send,
   Eye,
   Clock,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { LOCATIONS } from '@/constants/locations';
 
 interface Report {
   id: string;
@@ -30,48 +28,43 @@ interface Report {
   frequency: 'weekly' | 'monthly' | 'custom';
   status: 'ready' | 'generating';
   fileSize?: string;
+  location?: string;
 }
 
 const mockReports: Report[] = [
   {
     id: '1',
-    name: 'Fleet Utilization Report',
+    name: 'Fleet Utilization Report - All Locations',
     type: 'vehicle',
-    description: 'Vehicle usage and efficiency analysis',
+    description: 'Vehicle usage and efficiency analysis across all centers',
     lastGenerated: '2024-01-15',
     frequency: 'monthly',
     status: 'ready',
-    fileSize: '2.4 MB'
+    fileSize: '5.4 MB',
+    location: 'all'
   },
   {
     id: '2',
-    name: 'Booking Summary',
+    name: 'Booking Summary - PTC',
     type: 'booking',
-    description: 'Trainer booking patterns and statistics',
+    description: 'Trainer booking patterns for PTC location',
     lastGenerated: '2024-01-14',
     frequency: 'weekly',
     status: 'ready',
-    fileSize: '1.8 MB'
+    fileSize: '1.8 MB',
+    location: 'PTC'
   },
   {
     id: '3',
-    name: 'Trainer Activity Report',
+    name: 'Trainer Activity Report - All Locations',
     type: 'trainer',
-    description: 'Trainer usage and engagement metrics',
+    description: 'Trainer usage and engagement metrics system-wide',
     lastGenerated: '2024-01-10',
     frequency: 'monthly',
     status: 'ready',
-    fileSize: '956 KB'
+    fileSize: '2.1 MB',
+    location: 'all'
   },
-  {
-    id: '4',
-    name: 'Maintenance Log',
-    type: 'maintenance',
-    description: 'Vehicle maintenance and downtime tracking',
-    lastGenerated: '2024-01-12',
-    frequency: 'monthly',
-    status: 'generating',
-  }
 ];
 
 const reportTemplates = [
@@ -98,16 +91,15 @@ const reportTemplates = [
   }
 ];
 
-export function Reports() {
-  const { user } = useAuth();
-  const userLocation = user?.location || 'PTC';
+export function AllReports() {
   const [reports, setReports] = useState<Report[]>(mockReports);
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [reportForm, setReportForm] = useState({
     name: '',
     dateRange: 'last-month',
     frequency: 'monthly',
-    format: 'pdf'
+    format: 'pdf',
+    location: 'all'
   });
   const [loading, setLoading] = useState<string | null>(null);
 
@@ -156,7 +148,8 @@ export function Reports() {
         lastGenerated: new Date().toISOString().split('T')[0],
         frequency: reportForm.frequency as Report['frequency'],
         status: 'ready',
-        fileSize: `${(Math.random() * 3 + 1).toFixed(1)} MB`
+        fileSize: `${(Math.random() * 3 + 1).toFixed(1)} MB`,
+        location: reportForm.location
       };
       
       setReports(prev => [...prev, newReport]);
@@ -166,7 +159,8 @@ export function Reports() {
         name: '',
         dateRange: 'last-month',
         frequency: 'monthly',
-        format: 'pdf'
+        format: 'pdf',
+        location: 'all'
       });
       setSelectedTemplate('');
       
@@ -205,9 +199,9 @@ export function Reports() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">System Reports - {getLocationName(userLocation)}</h1>
+        <h1 className="text-3xl font-bold">System Reports - All Locations</h1>
         <p className="text-muted-foreground">
-          Generate and download fleet management reports for your location
+          Generate and download fleet management reports across all training centers
         </p>
       </div>
 
@@ -278,6 +272,25 @@ export function Reports() {
                   onChange={(e) => setReportForm(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Enter report name"
                 />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Select
+                  value={reportForm.location}
+                  onValueChange={(value) => setReportForm(prev => ({ ...prev, location: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Locations</SelectItem>
+                    {LOCATIONS.map(loc => (
+                      <SelectItem key={loc.code} value={loc.code}>
+                        {loc.fullName}
+                      </SelectItem>
+                    ))}</SelectContent>
+                </Select>
               </div>
               
               <div className="space-y-2">
@@ -371,6 +384,9 @@ export function Reports() {
                       <h3 className="font-medium">{report.name}</h3>
                       {getTypeBadge(report.type)}
                       {getStatusBadge(report.status)}
+                      {report.location && (
+                        <Badge variant="outline">{report.location === 'all' ? 'All Locations' : report.location}</Badge>
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground">{report.description}</p>
                     <div className="flex items-center space-x-3 text-xs text-muted-foreground">
@@ -411,3 +427,4 @@ export function Reports() {
     </div>
   );
 }
+

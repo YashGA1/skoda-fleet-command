@@ -3,6 +3,8 @@ import { StatCard } from '@/components/dashboard/StatCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import { getLocationName } from '@/constants/locations';
 
 const mockStats = {
   totalVehicles: 45,
@@ -56,6 +58,9 @@ const mockMaintenanceAlerts = [
 ];
 
 export function AdminDashboard() {
+  const { user } = useAuth();
+  const userLocation = user?.location || 'PTC';
+  
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -87,9 +92,9 @@ export function AdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold">Admin Dashboard - {getLocationName(userLocation)}</h1>
           <p className="text-muted-foreground">
-            Overview of fleet operations and system management
+            Overview of fleet operations and system management for your location
           </p>
         </div>
         <Button className="bg-gradient-primary hover:bg-primary-hover">

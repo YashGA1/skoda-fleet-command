@@ -145,7 +145,7 @@ const mockVehicles: Vehicle[] = [
   // ... continue with more vehicles as needed
 ];
 
-export function useVehicles() {
+export function useVehicles(filterLocation?: string) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -156,7 +156,13 @@ export function useVehicles() {
       setLoading(true);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      setVehicles(mockVehicles);
+      
+      // Filter vehicles by location if provided
+      const filteredVehicles = filterLocation 
+        ? mockVehicles.filter(v => v.location === filterLocation)
+        : mockVehicles;
+      
+      setVehicles(filteredVehicles);
       setError(null);
     } catch (err) {
       console.error('Error fetching vehicles:', err);
@@ -241,7 +247,7 @@ export function useVehicles() {
 
   useEffect(() => {
     fetchVehicles();
-  }, []);
+  }, [filterLocation]);
 
   return {
     vehicles,

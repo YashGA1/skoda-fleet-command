@@ -11,7 +11,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Plus, Edit, Trash2, Users as UsersIcon, Search, Filter, UserCheck, UserX, Shield, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
-import { LOCATIONS } from '@/constants/locations';
+import { LOCATIONS, getLocationName } from '@/constants/locations';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface User {
   id: string;
@@ -112,6 +113,9 @@ const initialUserForm: Omit<User, 'id' | 'joinDate' | 'lastLogin'> = {
 };
 
 export function Users() {
+  const { user: currentUser } = useAuth();
+  const userLocation = currentUser?.location || 'PTC';
+  
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -121,7 +125,10 @@ export function Users() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(false);
 
-  const filteredUsers = users.filter(user => {
+  // Filter users by current admin's location
+  const locationFilteredUsers = users.filter(user => user.location === userLocation);
+
+  const filteredUsers = locationFilteredUsers.filter(user => {
     const matchesSearch = 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -226,9 +233,9 @@ export function Users() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
+          <h1 className="text-3xl font-bold">User Management - {getLocationName(userLocation)}</h1>
           <p className="text-muted-foreground">
-            Manage system users and their permissions
+            Manage system users for your location
           </p>
         </div>
         
@@ -367,28 +374,28 @@ export function Users() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Users"
-          value={users.length}
+          value={locationFilteredUsers.length}
           description="All registered users"
           icon={UsersIcon}
           trend={{ value: 12, isPositive: true }}
         />
         <StatCard
           title="Active Users"
-          value={users.filter(u => u.status === 'active').length}
+          value={locationFilteredUsers.filter(u => u.status === 'active').length}
           description="Currently active"
           icon={UserCheck}
           trend={{ value: 8, isPositive: true }}
         />
         <StatCard
           title="Trainers"
-          value={users.filter(u => u.role === 'trainer').length}
+          value={locationFilteredUsers.filter(u => u.role === 'trainer').length}
           description="Training staff"
           icon={UsersIcon}
         />
         <StatCard
-          title="Administrators"
-          value={users.filter(u => u.role === 'admin').length}
-          description="Admin users"
+          title="Security Staff"
+          value={locationFilteredUsers.filter(u => u.role === 'security').length}
+          description="Security personnel"
           icon={Shield}
         />
       </div>
@@ -447,7 +454,7 @@ export function Users() {
         <CardHeader>
           <CardTitle>System Users</CardTitle>
           <CardDescription>
-            Showing {filteredUsers.length} of {users.length} users
+            Showing {filteredUsers.length} of {locationFilteredUsers.length} users
           </CardDescription>
         </CardHeader>
         <CardContent>

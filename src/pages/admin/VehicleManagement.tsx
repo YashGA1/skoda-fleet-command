@@ -7,10 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Car, Search, Filter, CheckCircle, Clock, AlertTriangle, Calendar, Plus } from 'lucide-react';
 import { useVehicles } from '@/hooks/useVehicles';
+import { useAuth } from '@/contexts/AuthContext';
+import { getLocationName } from '@/constants/locations';
 import { StatCard } from '@/components/dashboard/StatCard';
 
 export function VehicleManagement() {
-  const { vehicles, loading, updateVehicle } = useVehicles();
+  const { user } = useAuth();
+  const userLocation = user?.location || 'PTC';
+  const { vehicles, loading, updateVehicle } = useVehicles(userLocation);
   const [searchTerm, setSearchTerm] = useState('');
   const [brandFilter, setBrandFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -81,9 +85,9 @@ export function VehicleManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Vehicle Management</h1>
+          <h1 className="text-3xl font-bold">Vehicle Management - {getLocationName(userLocation)}</h1>
           <p className="text-muted-foreground">
-            Manage your VGA training fleet and track compliance
+            Monitor and manage fleet vehicles at your location
           </p>
         </div>
         <Button className="bg-gradient-primary hover:bg-primary-hover">

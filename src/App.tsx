@@ -9,6 +9,10 @@ import { LoginPage } from "@/components/auth/LoginPage";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { SuperAdminDashboard } from "@/pages/super-admin/SuperAdminDashboard";
 import { AdminManagement } from "@/pages/super-admin/AdminManagement";
+import { AllVehicles } from "@/pages/super-admin/AllVehicles";
+import { AllUsers } from "@/pages/super-admin/AllUsers";
+import { AllAnalytics } from "@/pages/super-admin/AllAnalytics";
+import { AllReports } from "@/pages/super-admin/AllReports";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { VehicleManagement } from "@/pages/admin/VehicleManagement";
 import { Analytics } from "@/pages/admin/Analytics";
@@ -46,10 +50,10 @@ function AppRoutes() {
         <Route path="/super-admin/messages" element={user?.role === 'super_admin' ? <Messages /> : <Navigate to={`/${user?.role}`} />} />
         <Route path="/super-admin/admins" element={user?.role === 'super_admin' ? <AdminManagement /> : <Navigate to={`/${user?.role}`} />} />
         <Route path="/super-admin/locations" element={user?.role === 'super_admin' ? <AdminManagement /> : <Navigate to={`/${user?.role}`} />} />
-        <Route path="/super-admin/users" element={user?.role === 'super_admin' ? <Users /> : <Navigate to={`/${user?.role}`} />} />
-        <Route path="/super-admin/vehicles" element={user?.role === 'super_admin' ? <VehicleManagement /> : <Navigate to={`/${user?.role}`} />} />
-        <Route path="/super-admin/reports" element={user?.role === 'super_admin' ? <Reports /> : <Navigate to={`/${user?.role}`} />} />
-        <Route path="/super-admin/analytics" element={user?.role === 'super_admin' ? <Analytics /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/users" element={user?.role === 'super_admin' ? <AllUsers /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/vehicles" element={user?.role === 'super_admin' ? <AllVehicles /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/reports" element={user?.role === 'super_admin' ? <AllReports /> : <Navigate to={`/${user?.role}`} />} />
+        <Route path="/super-admin/analytics" element={user?.role === 'super_admin' ? <AllAnalytics /> : <Navigate to={`/${user?.role}`} />} />
         
         {/* Admin Routes */}
         <Route path="/admin" element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to={`/${user?.role}`} />} />

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { getLocationName } from '@/constants/locations';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Button } from '@/components/ui/button';
@@ -43,6 +45,8 @@ const mockAnalytics = {
 };
 
 export function Analytics() {
+  const { user } = useAuth();
+  const userLocation = user?.location || 'PTC';
   const [timeRange, setTimeRange] = useState('6months');
 
   return (
@@ -50,9 +54,9 @@ export function Analytics() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">System Analytics</h1>
+          <h1 className="text-3xl font-bold">System Analytics - {getLocationName(userLocation)}</h1>
           <p className="text-muted-foreground">
-            Training fleet performance and usage insights
+            Training fleet performance and usage insights for your location
           </p>
         </div>
         <div className="flex space-x-2">
