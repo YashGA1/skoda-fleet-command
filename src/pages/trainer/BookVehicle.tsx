@@ -12,6 +12,7 @@ import { useVehicles } from '@/hooks/useVehicles';
 import { useBookings } from '@/hooks/useBookings';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { getAllTrainingCourses } from '@/constants/trainingCourses';
 
 type BookingStep = 'location' | 'vehicle' | 'details' | 'confirmation';
 
@@ -29,9 +30,12 @@ export function BookVehicle() {
     startDate: '',
     endDate: '',
     purpose: '',
+    customPurpose: '',
     urgency: 'normal' as 'normal' | 'high',
     notes: ''
   });
+
+  const allTrainingCourses = getAllTrainingCourses();
 
   const uniqueLocations = [...new Set(vehicles.map(v => v.location))];
   
@@ -59,13 +63,17 @@ export function BookVehicle() {
     if (!user || !selectedVehicle) return;
 
     try {
+      const finalPurpose = bookingForm.purpose === 'Other' 
+        ? bookingForm.customPurpose 
+        : bookingForm.purpose;
+
       await createBooking({
         vehicleId: selectedVehicle,
         trainerId: user.id,
         trainerName: user.name,
         startDate: bookingForm.startDate,
         endDate: bookingForm.endDate,
-        purpose: bookingForm.purpose,
+        purpose: finalPurpose,
         status: 'pending',
         urgency: bookingForm.urgency,
         notes: bookingForm.notes,
@@ -271,15 +279,40 @@ export function BookVehicle() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="purpose">Training Purpose</Label>
-                      <Input
-                        id="purpose"
+                      <Label htmlFor="purpose">Training Course</Label>
+                      <Select
                         value={bookingForm.purpose}
-                        onChange={(e) => setBookingForm(prev => ({ ...prev, purpose: e.target.value }))}
-                        placeholder="e.g., BQ Fundamental Training, Technology Module"
+                        onValueChange={(value) => 
+                          setBookingForm(prev => ({ ...prev, purpose: value, customPurpose: '' }))
+                        }
                         required
-                      />
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a training course" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px]">
+                          {allTrainingCourses.map((course) => (
+                            <SelectItem key={course.value} value={course.value}>
+                              {course.label}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="Other">Other (Specify below)</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
+
+                    {bookingForm.purpose === 'Other' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="customPurpose">Specify Training Purpose</Label>
+                        <Input
+                          id="customPurpose"
+                          value={bookingForm.customPurpose}
+                          onChange={(e) => setBookingForm(prev => ({ ...prev, customPurpose: e.target.value }))}
+                          placeholder="Enter custom training purpose"
+                          required
+                        />
+                      </div>
+                    )}
 
                     <div className="space-y-2">
                       <Label htmlFor="urgency">Priority</Label>
@@ -348,6 +381,7 @@ export function BookVehicle() {
                       startDate: '',
                       endDate: '',
                       purpose: '',
+                      customPurpose: '',
                       urgency: 'normal',
                       notes: ''
                     });
