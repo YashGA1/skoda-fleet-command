@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus, Filter, Calendar, Wrench, AlertTriangle, CheckCircle, Clock, Car, User, FileText, Download, Eye, Shield, AlertCircle } from 'lucide-react';
+import AddServiceRecordDialog from '@/components/admin/AddServiceRecordDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -301,10 +302,12 @@ export default function ServiceRecords() {
           <h1 className="text-3xl font-bold">Vehicle Records</h1>
           <p className="text-muted-foreground">Comprehensive vehicle management and compliance tracking</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Vehicle
-        </Button>
+        <AddServiceRecordDialog>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Service Record
+          </Button>
+        </AddServiceRecordDialog>
       </div>
 
       {/* Stats Cards */}
