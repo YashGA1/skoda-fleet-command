@@ -15,14 +15,11 @@ export function Messages() {
   const { user } = useAuth();
   const { messages, sendMessage, markAsRead } = useMessaging();
   const [newMessage, setNewMessage] = useState('');
-  const [messageType, setMessageType] = useState<'broadcast' | 'direct'>('direct');
+  const [messageType, setMessageType] = useState<'broadcast' | 'direct'>('broadcast');
   const [selectedRecipient, setSelectedRecipient] = useState<string>('');
   const [broadcastTo, setBroadcastTo] = useState<string>('all');
   const [searchRecipient, setSearchRecipient] = useState('');
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
-
-  // Check if user can broadcast (only super_admin and admin)
-  const canBroadcast = user?.role === 'super_admin' || user?.role === 'admin';
 
   const handleSend = () => {
     if (!newMessage.trim()) return;
@@ -30,19 +27,11 @@ export function Messages() {
     if (replyingTo) {
       // Send reply to original sender
       sendMessage(newMessage, [replyingTo.senderId], undefined, replyingTo.id);
-    } else if (messageType === 'broadcast' && canBroadcast) {
+    } else if (messageType === 'broadcast') {
       if (broadcastTo === 'all') {
         sendMessage(newMessage, []);
       } else {
-        // For admin, filter recipients by location
-        if (user?.role === 'admin') {
-          const locationRecipients = mockUsers
-            .filter(u => u.role === broadcastTo && u.location === user.location)
-            .map(u => u.id);
-          sendMessage(newMessage, locationRecipients);
-        } else {
-          sendMessage(newMessage, [], [broadcastTo]);
-        }
+        sendMessage(newMessage, [], [broadcastTo]);
       }
     } else {
       if (selectedRecipient) {
@@ -70,15 +59,7 @@ export function Messages() {
     return false;
   }).sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
-  // Filter recipients based on user role
-  const availableRecipients = mockUsers.filter(u => {
-    if (u.id === user?.id) return false;
-    // Admin can only message users from their location
-    if (user?.role === 'admin') {
-      return u.location === user.location;
-    }
-    return true;
-  });
+  const availableRecipients = mockUsers.filter(u => u.id !== user?.id);
 
   // Filter recipients based on search
   const filteredRecipients = useMemo(() => {
@@ -125,46 +106,37 @@ export function Messages() {
 
           {!replyingTo && (
             <>
-              {canBroadcast && (
-                <div className="flex gap-2">
-                  <Button
-                    variant={messageType === 'broadcast' ? 'default' : 'outline'}
-                    onClick={() => setMessageType('broadcast')}
-                    className="flex-1"
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    Broadcast
-                  </Button>
-                  <Button
-                    variant={messageType === 'direct' ? 'default' : 'outline'}
-                    onClick={() => setMessageType('direct')}
-                    className="flex-1"
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    Direct Message
-                  </Button>
-                </div>
-              )}
+              <div className="flex gap-2">
+                <Button
+                  variant={messageType === 'broadcast' ? 'default' : 'outline'}
+                  onClick={() => setMessageType('broadcast')}
+                  className="flex-1"
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  Broadcast
+                </Button>
+                <Button
+                  variant={messageType === 'direct' ? 'default' : 'outline'}
+                  onClick={() => setMessageType('direct')}
+                  className="flex-1"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Direct Message
+                </Button>
+              </div>
 
-              {messageType === 'broadcast' && canBroadcast ? (
-                <div className="space-y-2">
-                  <Select value={broadcastTo} onValueChange={setBroadcastTo}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select audience" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {user?.role === 'super_admin' && <SelectItem value="all">All Users</SelectItem>}
-                      {user?.role === 'super_admin' && <SelectItem value="admin">All Admins</SelectItem>}
-                      <SelectItem value="trainer">All Trainers{user?.role === 'admin' ? ` (${user.location})` : ''}</SelectItem>
-                      <SelectItem value="security">All Security{user?.role === 'admin' ? ` (${user.location})` : ''}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {user?.role === 'admin' && (
-                    <p className="text-xs text-muted-foreground">
-                      Broadcast will be sent only to users in your location ({user.location})
-                    </p>
-                  )}
-                </div>
+              {messageType === 'broadcast' ? (
+                <Select value={broadcastTo} onValueChange={setBroadcastTo}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select audience" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Users</SelectItem>
+                    <SelectItem value="admin">All Admins</SelectItem>
+                    <SelectItem value="trainer">All Trainers</SelectItem>
+                    <SelectItem value="security">All Security</SelectItem>
+                  </SelectContent>
+                </Select>
               ) : (
                 <div className="space-y-2">
                   <div className="relative">

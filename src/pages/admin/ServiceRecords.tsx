@@ -7,9 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
-import { getLocationName } from '@/constants/locations';
-import { AddMaintenanceRecordDialog } from '@/components/admin/AddMaintenanceRecordDialog';
 
 interface VehicleRecord {
   id: string;
@@ -234,27 +231,14 @@ const mockVehicleRecords: VehicleRecord[] = [
 ];
 
 export default function ServiceRecords() {
-  const { user } = useAuth();
-  const userLocation = user?.location || 'PTC';
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [brandFilter, setBrandFilter] = useState('all');
   const [loading, setLoading] = useState(false);
-  const [showAddDialog, setShowAddDialog] = useState(false);
   const { toast } = useToast();
 
-  // Filter records by user location for admin role
-  const locationFilteredRecords = user?.role === 'admin' 
-    ? mockVehicleRecords.filter(r => {
-        const locationName = getLocationName(userLocation);
-        // Match both full name and short name
-        return r.academyLocation === locationName || 
-               r.academyLocation === locationName.split(' ')[0]; // "Pune" from "Pune Training Center"
-      })
-    : mockVehicleRecords;
-
-  const filteredRecords = locationFilteredRecords.filter(record => {
+  const filteredRecords = mockVehicleRecords.filter(record => {
     const matchesSearch = record.vehicleRegNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          record.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          record.allocatedTrainer.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -302,28 +286,26 @@ export default function ServiceRecords() {
       <Badge variant="destructive">Expired</Badge>;
   };
 
-  const totalVehicles = locationFilteredRecords.length;
-  const validInsurance = locationFilteredRecords.filter(r => r.insuranceStatus === 'Valid').length;
-  const expiredPuc = locationFilteredRecords.filter(r => r.pucStatus === 'Expired').length;
-  const totalCostIncurred = locationFilteredRecords.reduce((sum, record) => sum + (record.costIncurred || 0), 0);
+  const totalVehicles = mockVehicleRecords.length;
+  const validInsurance = mockVehicleRecords.filter(r => r.insuranceStatus === 'Valid').length;
+  const expiredPuc = mockVehicleRecords.filter(r => r.pucStatus === 'Expired').length;
+  const totalCostIncurred = mockVehicleRecords.reduce((sum, record) => sum + (record.costIncurred || 0), 0);
 
-  const uniqueLocations = [...new Set(locationFilteredRecords.map(r => r.academyLocation))];
-  const uniqueBrands = [...new Set(locationFilteredRecords.map(r => r.brand))];
+  const uniqueLocations = [...new Set(mockVehicleRecords.map(r => r.academyLocation))];
+  const uniqueBrands = [...new Set(mockVehicleRecords.map(r => r.brand))];
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Vehicle Records - {getLocationName(userLocation)}</h1>
+          <h1 className="text-3xl font-bold">Vehicle Records</h1>
           <p className="text-muted-foreground">Comprehensive vehicle management and compliance tracking</p>
         </div>
-        <Button onClick={() => setShowAddDialog(true)}>
+        <Button>
           <Plus className="h-4 w-4 mr-2" />
-          Add Maintenance Record
+          Add Vehicle
         </Button>
       </div>
-
-      <AddMaintenanceRecordDialog open={showAddDialog} onOpenChange={setShowAddDialog} />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
